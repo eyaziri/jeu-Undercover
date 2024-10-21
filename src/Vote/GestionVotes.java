@@ -4,19 +4,25 @@
  */
 package Vote;
 
+import Administration.GestionJoueur;
+import Administration.ListeMots;
 import GestionJoueur.Joueur;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  *
  * @author eyazi
  */public class GestionVotes {
     
+     private Elimination elimination;
      private HashMap<Joueur, Integer> resultatVote;
 
     public GestionVotes() 
     {
         resultatVote = new HashMap<>();
+        this.elimination = new Elimination(); 
     }
     
     public void ajouterVote(Joueur joueur) {
@@ -39,6 +45,40 @@ import java.util.HashMap;
         }
     }
     
+      public void eliminerJoueurApresVote(ListeMots listeMots) {
+        List<Joueur> joueurs = GestionJoueur.getJoueurs();
+        Joueur joueurElimine = null;
+        
+        
+        for (Joueur joueur : joueurs) {
+            if (joueurElimine == null || joueur.getNombreDeVotesRecus() > joueurElimine.getNombreDeVotesRecus()) {
+                joueurElimine = joueur;
+            }
+        }
+
+     
+        if (joueurElimine != null) {
+            if (joueurElimine.getRole().equalsIgnoreCase("Civil") || joueurElimine.getRole().equalsIgnoreCase("Undercover")) {
+                System.out.println("Le joueur " + joueurElimine.getNom() + " est éliminé avec " + joueurElimine.getNombreDeVotesRecus() + " votes.");
+                joueurElimine.estEliminer(listeMots); 
+                elimination.ajouterJoueurElimine(joueurElimine);
+            } else if (joueurElimine.getRole().equalsIgnoreCase("Mr.White")) {
+              
+                Scanner sc = new Scanner(System.in);
+                String motDevine;
+                System.out.println("Vous êtes Mr. White. Essayez de deviner le mot associé : ");
+                motDevine = sc.nextLine();
+
+                if (motDevine.equalsIgnoreCase(joueurElimine.getMot())) {
+                    System.out.println("Félicitations, vous avez deviné correctement et vous n'êtes pas éliminé.");
+                } else {
+                    System.out.println("Échec. Vous avez été éliminé. Le mot correct était : " + joueurElimine.getMot());
+                    joueurElimine.estEliminer(listeMots);
+                    elimination.ajouterJoueurElimine(joueurElimine);
+                }
+            }
+        }
+    }
     
     
 }

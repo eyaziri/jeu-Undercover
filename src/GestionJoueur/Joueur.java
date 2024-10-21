@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GestionJoueur;
-import Administration.*;
+import Administration.ListeMots;
+import Administration.Role;
 import Forum.*;
 import java.time.LocalDate;
 
@@ -11,7 +12,7 @@ import java.time.LocalDate;
  *
  * @author eyazi
  */
-import java.util.ArrayList;
+
 import java.util.Scanner;
 
 public abstract class Joueur {
@@ -29,8 +30,8 @@ public abstract class Joueur {
         Scanner sc = new Scanner(System.in);
         String n = sc.nextLine();
         this.nom = n;
-        this.score = 0; // Initialisation du score à 0
-        this.idJoueur = ++compteurId; // Incrémente le compteur d'ID pour chaque joueur
+        this.score = 0; 
+        this.idJoueur = ++compteurId; 
     }
     public String getNom()
     {
@@ -75,6 +76,10 @@ public abstract class Joueur {
         this.role.setNomRole();
     }
     
+      public int getNombreDeVotesRecus() {
+        return this.nombreDeVotesRecus;
+    }
+      
     public void EcrireMessage() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Bonjour " + this.nom + ", écrivez votre message :");
@@ -103,20 +108,22 @@ public abstract class Joueur {
      }
      
      
-     
-     
-     public void Voter()
-    {
-        
-        
-    }
-    public void estEliminer()
-    {
-        
+     public void estEliminer(ListeMots listeMots) {
+        if (this.getRole().equalsIgnoreCase("Civil") || this.getRole().equalsIgnoreCase("Undercover")) {
+            System.out.println("Le joueur " + this.nom + " est maintenant éliminé car il a reçu le plus de votes.");
+        } else if (this.getRole().equalsIgnoreCase("Mr.White")) {
+            Scanner sc = new Scanner(System.in);
+            String motDevine;
+            System.out.println("Vous êtes Mr. White. Essayez de deviner le mot associé : ");
+            motDevine = sc.nextLine();
+            
+            if (motDevine.equalsIgnoreCase(this.mot)) {
+                System.out.println("Félicitations ! Vous avez deviné correctement, vous n'êtes pas éliminé.");
+            } else {
+                System.out.println("Échec. Le mot était " + this.mot + ". Vous êtes éliminé.");
+            }
+        }
     }
 
-    
-    
-    
     
 }

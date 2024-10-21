@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class StatistiqueVote {
     private int nombreTotalDeVotes;
-    private Map<Joueur, Integer> votesParJoueur;
+    private final Map<Joueur, Integer> votesParJoueur;
 
     public StatistiqueVote() {
         this.nombreTotalDeVotes = 0;
