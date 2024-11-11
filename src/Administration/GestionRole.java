@@ -33,14 +33,14 @@ public class GestionRole {
     public void supprimerJoueur(String nom) {
         if (classification.containsKey(nom)) {
             classification.remove(nom);
-            System.out.println(nom + " a été supprimé de la partie.");
+            System.out.println(nom + " a ete supprime de la partie.");
         } else {
             System.out.println("Le joueur " + nom + " n'existe pas.");
         }
     }
 
     public void afficherJoueurs() {
-        System.out.println("Liste des joueurs et leurs rôles :");
+        System.out.println("Liste des joueurs et leurs roles :");
         for (Map.Entry<String, String> entry : classification.entrySet()) {
             System.out.println("Joueur : " + entry.getKey());
         }

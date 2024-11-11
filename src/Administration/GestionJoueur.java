@@ -24,6 +24,11 @@ public class GestionJoueur {
      {
         joueurs.add(joueur);
      }
+     
+     public void supprimerJoueur(Joueur joueur) 
+        {
+            joueurs.remove(joueur);
+        }
 
     public static ArrayList<Joueur> getJoueurs()
     {
@@ -86,5 +91,18 @@ public class GestionJoueur {
            }
         }
             return null;
+    }
+    
+    public int longueurListe(){
+        return joueurs.size();
+    }
+    
+    
+    public void AffichageListeJoueurs()
+    {
+        for(int i=0;i<joueurs.size();i++)
+        {
+            System.out.println(joueurs.get(i).getNom());
+        }
     }
 }

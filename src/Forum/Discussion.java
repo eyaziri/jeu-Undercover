@@ -22,6 +22,17 @@ public class Discussion {
     }
 
     public List<Message> getMessages() {
-        return messages;
+        return new ArrayList<>(messages); 
     }
+    
+    public void afficherMessages() 
+    {
+    if (messages.isEmpty()) {
+        System.out.println("Aucun message dans la discussion.");
+    } else {
+        for (Message message : messages) {
+            message.afficherMessage();  
+        }
+    }
+}
 }

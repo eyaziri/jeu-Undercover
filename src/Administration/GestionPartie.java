@@ -3,10 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Administration;
+import Forum.Discussion;
+import Forum.Forum;
+import Forum.Message;
 import GestionJoueur.Civil;
+import GestionJoueur.Gagnant;
 import GestionJoueur.Joueur;
 import GestionJoueur.MrWhite;
+import GestionJoueur.Score;
 import GestionJoueur.Undercover;
+import Vote.PhaseVote;
 import java.util.Scanner;
 
 /**
@@ -89,7 +95,7 @@ public class GestionPartie {
                         else if (role.equals("MrWhite") && totalMrWhite < gestionJoueur.getNombreMrWhite()) {
                             joueur = new MrWhite();
                             joueur.setRole("MrWhite");
-                            joueur.setMot(" Tu dois decouvrir le mot ! ");
+                            joueur.setMot(" Tu es Mr white ! ");
                             totalMrWhite++;
                         } 
                         else {
@@ -97,28 +103,23 @@ public class GestionPartie {
                         }
 
                         gestionJoueur.ajouterJoueur(joueur);
-                        System.out.println(joueur.getNom() + " Votre role est :  - " + joueur.getRole() + " et le mot est : " + joueur.getMot());
+                        System.out.println("\n"+joueur.getNom() +  " ton  mot est : " + joueur.getMot()+"\n");
                     }
 
                     if (totalCivil >= gestionJoueur.getNombreCivil() && totalUndercover >= gestionJoueur.getNombreUndercover() &&  totalMrWhite >= gestionJoueur.getNombreMrWhite())
                     {
-                        System.out.println("Tous les joueurs ont recu leur role.");
+                        System.out.println("\nTous les joueurs ont recu leur role.\n");
                     }
-
-
-
-
-
-
-
-                
-                
-                
-                
-                
-                
-                
-                
+                    
+                    Forum forum =new Forum();
+                    
+                    PhaseVote phasevote = new PhaseVote();
+                    phasevote.demarrerVote(gestionJoueur,forum);
+                    
+                    
+                    
+                    
+                            
                 
                 choix=3;
                 break;
@@ -131,11 +132,45 @@ public class GestionPartie {
         }
     }
 }
-  public void terminerPartie()
-  {
-     System.out.println("Felicitations vous avez termine cette partie .");
-     System.out.println("Le gagnant est : ");
-     System.out.println("Voila les statistique de jeu :");
-  }
-}
+        public void terminerPartie() {
+          System.out.println("La partie est terminée !");
+          System.out.println("Voici les scores de chaque joueur :");
+
+          Score score = new Score();
+          score.afficherScores(); // Display each player's score
+
+          Gagnant gagnant = new Gagnant();
+          gagnant.afficherGagnant(); // Announce the winner
+
+          // Prompt user for next action
+          System.out.println("\nQue souhaitez-vous faire ensuite ?");
+          System.out.println("1 - Retourner au menu principal");
+          System.out.println("2 - Redémarrer une nouvelle partie");
+
+          Scanner sc = new Scanner(System.in);
+          int choix = sc.nextInt();
+
+          switch (choix) {
+              case 1:
+                  demarrerPartie(); // Return to the main menu
+                  break;
+              case 2:
+                  redemarrerPartie(); // Restart the game
+                  break;
+              default:
+                  System.out.println("Choix invalide. Retour au menu principal.");
+                  demarrerPartie(); // Return to the main menu by default
+                  break;
+          }
+      }
+
+      // Method to restart the game
+      public void redemarrerPartie() {
+          System.out.println("Redémarrage de la partie...");
+          demarrerPartie(); // Call demarrerPartie() to start a new game
+      }
+
+      }
+
+
 

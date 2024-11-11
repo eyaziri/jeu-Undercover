@@ -9,27 +9,26 @@ package GestionJoueur;
  * @author eyazi
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Gagnant {
     private String gagnant;
 
-    // Constructeur
     public Gagnant() {
         this.gagnant = null;
     }
 
-    // Déterminer le gagnant selon les règles du jeu Undercover
-    public void determinerGagnant(List<Joueur> joueursRestants) {
+
+    public void determinerGagnant(ArrayList<Joueur> joueursElimines) {
         int undercoverCount = 0;
         int civilCount = 0;
         int mrsWhiteCount = 0;
 
         boolean mrsWhiteEnVie = false;
 
-        // Parcourir les joueurs restants et compter les rôles
-        for (Joueur joueur : joueursRestants) {
+        for (Joueur joueur : joueursElimines) {
             if (joueur instanceof Undercover) {
                 undercoverCount++;
             } else if (joueur instanceof Civil) {
@@ -43,29 +42,34 @@ public class Gagnant {
             }
         }
 
-        // Vérifier les conditions de victoire
         if (undercoverCount == 0 && civilCount > 0) {
             this.gagnant = "Civils";
-            System.out.println("Les Civils ont gagné !");
+            System.out.println("Les Civils ont gagne !");
         } else if (undercoverCount > 0 && civilCount == 0 && !mrsWhiteEnVie) {
             this.gagnant = "Undercover";
-            System.out.println("Les Undercover ont gagné !");
+            System.out.println("Les Undercover ont gagne !");
         } else if (mrsWhiteEnVie && undercoverCount == 0 && civilCount <= mrsWhiteCount) {
             this.gagnant = "Mrs. White";
-            System.out.println("Mrs. White a gagné !");
+            System.out.println("Mr. White a gagne !");
         } else {
             System.out.println("Le jeu est encore en cours.");
         }
     }
 
-    // Obtenir le nom du gagnant
     public String getGagnant() {
         return gagnant;
     }
 
-    // Réinitialiser le gagnant pour une nouvelle partie
     public void reinitialiserGagnant() {
         this.gagnant = null;
-        System.out.println("Le gagnant a été réinitialisé.");
+        System.out.println("Le gagnant a ete renitialise.");
+    }
+    
+    public void afficherGagnant() {
+        if (gagnant != null) {
+            System.out.println("Le gagnant de cette partie est : " + gagnant);
+        } else {
+            System.out.println("Il n'y a pas encore de gagnant.");
+        }
     }
 }

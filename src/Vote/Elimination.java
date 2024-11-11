@@ -22,7 +22,7 @@ public class Elimination {
         if (!joueursElimines.isEmpty()) {
             return joueursElimines.get(joueursElimines.size() - 1);
         }
-        return null; // Aucun joueur éliminé
+        return null; 
     }
     
      public void ajouterJoueurElimine(Joueur joueur) {

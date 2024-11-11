@@ -31,8 +31,8 @@ public class Vote {
         return this.joueurVotant.getNom();
     }
     
-    public void ajouterVote() {
-        System.out.println("Choisir le joueur que vous croyez être Mr. White : ");
+    public void ajouterVote(Joueur joueur) {
+        System.out.println(" \n " + joueur.getNom() +"  Choisir le joueur que vous croyez etre Mr. White : ");
         Scanner sc = new Scanner(System.in);
         String nom = sc.nextLine();
 
@@ -40,9 +40,9 @@ public class Vote {
 
         if (joueurTrouve != null) {
             joueurTrouve.setnombreDeVotesRecus();
-            System.out.println("Le joueur " + joueurTrouve.getNom() + " a reçu un vote.");
+            System.out.println("Le joueur " + joueurTrouve.getNom() + " a recu un vote.");
         } else {
-            System.out.println("Joueur non trouvé.");
+            System.out.println("Joueur non trouve.");
         }
     }
     

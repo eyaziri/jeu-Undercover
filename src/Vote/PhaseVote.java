@@ -5,8 +5,14 @@
 package Vote;
 
 import Administration.GestionJoueur;
+import Administration.ListeMots;
+import Forum.Discussion;
+import Forum.Forum;
+import Forum.Message;
+import GestionJoueur.Gagnant;
 import GestionJoueur.Joueur;
 import java.util.Scanner;
+
 
 /**
  *
@@ -16,37 +22,71 @@ public class PhaseVote {
     
     boolean phaseTermine;
     
-    public void demarrerVote() {
-        System.out.println(" ********* La session de vote commence ********* ");
-        boolean voteEnCours = true;
+    public void demarrerVote(GestionJoueur gestionJoueur,Forum forum)
+{
+    GestionVotes gestionVote = new GestionVotes();
+    while (!estPhaseTermine()) {System.out.println("\n\n ------------------------------  La session de vote commence   ----------------------\n\n");
+        Discussion discussion =new Discussion();
+        forum.creerDiscussion(discussion);
+                    
+         for (int i = 0; i < gestionJoueur.longueurListe(); i++)
+        {
+        Joueur joueur = gestionJoueur.getJoueurs().get(i);  
+        Message msg = new Message(" ", joueur);
+        msg = joueur.EcrireMessage();
+        discussion.ajouterMessage(msg);
+        }
 
-        while (voteEnCours) {
+        discussion.afficherMessages();
+        for (int i = 0; i < gestionJoueur.longueurListe(); i++) {
+            Joueur joueur = gestionJoueur.getJoueurs().get(i);
             Vote vote = new Vote();
-            vote.ajouterVote();
+            vote.ajouterVote(joueur);  
+            gestionVote.ajouterVote(joueur); 
 
-            if (tousLesJoueursOntVote()) {
-                terminerPhase();
-                voteEnCours = false;
+        }
+
+        System.out.println("\n -------------------  La session de vote est terminee  --------------");
+
+        gestionVote.eliminerJoueurApresVote(gestionJoueur);
+        System.out.println("\n\n La liste des Joueurs restants \n\n");
+        gestionJoueur.AffichageListeJoueurs();
+
+         int nombreDeJoueurRestantCivil = 0;
+        int nombreDeJoueurRestantUndercover = 0;
+        int nombreDeJoueurRestantMrWhite = 0;
+
+        for (Joueur joueur : gestionJoueur.getJoueurs()) {
+            if (joueur.getRole().equalsIgnoreCase("Civile")) {
+                nombreDeJoueurRestantCivil++;
+            } else if (joueur.getRole().equalsIgnoreCase("Undercover")) {
+                nombreDeJoueurRestantUndercover++;
+            } else if (joueur.getRole().equalsIgnoreCase("MrWhite")) {
+                nombreDeJoueurRestantMrWhite++;
             }
         }
-    }
 
-    private boolean tousLesJoueursOntVote() {
-        for (Joueur joueur : GestionJoueur.getJoueurs()) {
-            if (!joueur.isAVote()) {
-                return false; 
+        if (nombreDeJoueurRestantMrWhite == 0) {
+            if (nombreDeJoueurRestantCivil >= nombreDeJoueurRestantUndercover) {
+                System.out.println("Les Civils ont gagne !");
+                this.terminerPhase();
+            } else if (nombreDeJoueurRestantCivil < nombreDeJoueurRestantUndercover) {
+                System.out.println("Les Undercover ont gagne !");
+                this.terminerPhase();
             }
+        } else if (nombreDeJoueurRestantMrWhite >= 1) {
+            System.out.println("Le jeu continue, car Mr. White est encore en jeu.");
         }
-        return true;
     }
-     
-     
-     public void terminerPhase() {
-        this.phaseTermine = true;
-        System.out.println(" ********* La session de vote est terminée ********* ");
-    }
-     public boolean estPhaseTermine() {
-        return phaseTermine;
-    }
+   
+}
 
+public void terminerPhase() {
+    this.phaseTermine = true;
+    System.out.println(" \n\n -------------------  La phase de vote est terminee  --------------\n\n ");
+}
+
+public boolean estPhaseTermine() {
+    return phaseTermine;
+}
 }

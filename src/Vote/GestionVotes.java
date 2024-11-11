@@ -33,52 +33,73 @@ import java.util.Scanner;
             resultatVote.put(joueur, 1);  
         }
     }
-    public int getVotes(Joueur joueur) {
+    
+    public int getVotes(Joueur joueur)
+    {
         return resultatVote.getOrDefault(joueur, 0);  
     }
     
-     public void afficherResultats() {
+     public void afficherResultats()
+     {
         for (HashMap.Entry<Joueur, Integer> entry : resultatVote.entrySet()) {
             Joueur joueur = entry.getKey();
             int votes = entry.getValue();
-            System.out.println("Joueur: " + joueur.getNom() + " a reçu " + votes + " votes.");
+            System.out.println("Joueur: " + joueur.getNom() + " a recu " + votes + " votes.");
         }
     }
     
-      public void eliminerJoueurApresVote(ListeMots listeMots) {
-        List<Joueur> joueurs = GestionJoueur.getJoueurs();
-        Joueur joueurElimine = null;
-        
-        
-        for (Joueur joueur : joueurs) {
-            if (joueurElimine == null || joueur.getNombreDeVotesRecus() > joueurElimine.getNombreDeVotesRecus()) {
-                joueurElimine = joueur;
-            }
-        }
-
-     
-        if (joueurElimine != null) {
-            if (joueurElimine.getRole().equalsIgnoreCase("Civil") || joueurElimine.getRole().equalsIgnoreCase("Undercover")) {
-                System.out.println("Le joueur " + joueurElimine.getNom() + " est éliminé avec " + joueurElimine.getNombreDeVotesRecus() + " votes.");
-                joueurElimine.estEliminer(listeMots); 
-                elimination.ajouterJoueurElimine(joueurElimine);
-            } else if (joueurElimine.getRole().equalsIgnoreCase("Mr.White")) {
-              
-                Scanner sc = new Scanner(System.in);
-                String motDevine;
-                System.out.println("Vous êtes Mr. White. Essayez de deviner le mot associé : ");
-                motDevine = sc.nextLine();
-
-                if (motDevine.equalsIgnoreCase(joueurElimine.getMot())) {
-                    System.out.println("Félicitations, vous avez deviné correctement et vous n'êtes pas éliminé.");
-                } else {
-                    System.out.println("Échec. Vous avez été éliminé. Le mot correct était : " + joueurElimine.getMot());
-                    joueurElimine.estEliminer(listeMots);
-                    elimination.ajouterJoueurElimine(joueurElimine);
-                }
-            }
+    public void eliminerJoueurApresVote(GestionJoueur gestionJoueur) {
+    List<Joueur> joueurs = gestionJoueur.getJoueurs();
+    Joueur joueurElimine = null;
+    String mot = null; // Initialisation du mot à l'extérieur de la boucle
+    
+    // Trouver le joueur ayant reçu le plus de votes
+    for (Joueur joueur : joueurs) {
+        if (joueurElimine == null || joueur.getNombreDeVotesRecus() > joueurElimine.getNombreDeVotesRecus()) {
+            joueurElimine = joueur;
         }
     }
+    
+    if (joueurElimine != null) {
+        String role = joueurElimine.getRole().toLowerCase();
+        
+        if (role.equals("civile") || role.equals("undercover")) {
+            System.out.println("Le joueur " + joueurElimine.getNom() + " est elimine avec " + joueurElimine.getNombreDeVotesRecus() + " votes." + " qui a le role de : " + joueurElimine.getRole());
+            joueurElimine.estEliminer(gestionJoueur);
+            elimination.ajouterJoueurElimine(joueurElimine);
+            gestionJoueur.supprimerJoueur(joueurElimine);
+        } else if (role.equals("mrwhite")) {
+            // Récupérer le mot d'un joueur civile
+            for (int i = 0; i < gestionJoueur.longueurListe(); i++) {
+                Joueur joueur = gestionJoueur.getJoueurs().get(i);
+                if (joueur.getRole().equalsIgnoreCase("civile")) {
+                    mot = joueur.getMot();
+                    break; // On arrête la recherche dès qu'on trouve un mot chez un civile
+                }      
+            }
+            
+            // Vérification du mot pour Mr. White
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Vous etes Mr. White. Essayez de deviner le mot associe : ");
+            String motDevine = sc.nextLine();
+            
+            if (mot != null && motDevine.equalsIgnoreCase(mot)) {
+                System.out.println("Felicitations, vous avez devine correctement et vous n'etes pas elimine.");
+            } else {
+                System.out.println("Echec. Vous avez ete elimine. Le mot correct etait : " + mot);
+                joueurElimine.estEliminer(gestionJoueur);
+                elimination.ajouterJoueurElimine(joueurElimine);
+                gestionJoueur.supprimerJoueur(joueurElimine);
+            }
+            sc.close();  
+        }
+    } else {
+        System.out.println("Aucun joueur n'a ete trouve pour elimination.");
+    }
+}
+
+    
+    
     
     
 }
