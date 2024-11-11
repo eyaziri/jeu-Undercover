@@ -25,11 +25,9 @@ public abstract class Joueur {
     protected int nombreDeVotesRecus=0;
     protected boolean aVote = false;
     
-     public Joueur() {
-        System.out.println("Donner le nom de joueur :");
-        Scanner sc = new Scanner(System.in);
-        String n = sc.nextLine();
-        this.nom = n;
+     public Joueur() 
+     {
+        this.role = new Role();
         this.score = 0; 
         this.idJoueur = ++compteurId; 
     }
@@ -41,10 +39,7 @@ public abstract class Joueur {
     {
         return idJoueur;
     }
-    public String getRole()
-    {
-        return role.getNomRole();
-    }
+    
     public void setNom(String nom)
     {
         this.nom=nom;
@@ -59,9 +54,8 @@ public abstract class Joueur {
         return score;
     }
     
-    public void setMot(String mot)
-    {
-        this.mot=mot;
+    public void setMot(String mot) {
+        this.mot = mot; 
     }
     
     public String getMot()
@@ -69,13 +63,16 @@ public abstract class Joueur {
         return mot;
     }
     
-    
-    public void setRole()
+    public void setRole(String nomRole)
     {
-        Role role=new Role();
-        this.role.setNomRole();
+        this.role = new Role(); 
+        this.role.setNomRole(nomRole);
     }
     
+    public String getRole()
+    {
+        return role.getNomRole();
+    }
       public int getNombreDeVotesRecus() {
         return this.nombreDeVotesRecus;
     }

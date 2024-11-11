@@ -30,21 +30,21 @@ public class Admin {
     setNombreJoueur(nombre);
 }
     public void annocerRegle(){
-         System.out.println("*************Bienvenue dans le jeu Undercover!************");
-        System.out.println("******************** Règles du jeu :***********************");
-        System.out.println("1. Les joueurs sont divisés en trois rôles : Undercover, Mrs White, et les civils.");
-        System.out.println("2. Les joueurs reçoivent des mots . Les civils reçoivent le même mot \n" +
-                                "les Undercover reçoivent des mots différents \n" +
-                                " Mr. White reçoit « Mr. White » .");
-        System.out.println("3.  les joueurs peuvent discuter entre eux pour tenter de découvrir les rôles des autres joueurs.");
-        System.out.println("4. Les Mrs White doivent essayer de rester cachés tout en faisant accuser les civils.");
-        System.out.println("5. À chaque tour, une discussion a lieu, puis un vote est organisé pour éliminer un joueur.");
-        System.out.println("6. Si le joueur éliminé est Mrs. White, elle a une dernière chance de deviner le mot des autres joueurs.\n"+""
-                         + "Si elle devine correctement, elle gagne. Sinon, elle est définitivement éliminée.");
-        System.out.println("7. Le jeu se termine lorsque tous les Mrs White sont éliminés ou lorsqu'ils ont réussi à faire éliminer tous les civils.");
+         System.out.println("*************Bienvenue dans le jeu Undercover!************\n\n");
+        System.out.println("******************** Regles du jeu :***********************\n\n");
+        System.out.println("1. Les joueurs sont divises en trois roles : Undercover, Mrs White, et les civils.\n");
+        System.out.println("2. Les joueurs recoivent des mots . Les civils recoivent le meme mot " +
+                                "et les Undercover recoivent des mots differents " +
+                                " Mr. White recoit - Mr. White - .\n");
+        System.out.println("3.  les joueurs peuvent discuter entre eux pour tenter de decouvrir les roles des autres joueurs.\n");
+        System.out.println("4. Les Mrs White doivent essayer de rester caches tout en faisant accuser les civils.\n");
+        System.out.println("5. A chaque tour, une discussion a lieu, puis un vote est organise pour eliminer un joueur.\n");
+        System.out.println("6. Si le joueur elimine est Mr. White, il a une derniere chance de deviner le mot des autres joueurs."+""
+                         + "Si il devine correctementle mot , il gagne et le jeu se termine. Sinon, il est definitivement elimine.\n");
+        System.out.println("7. Le jeu se termine lorsque tous les Mrs White sont elimines ou lorsqu'ils ont reussi a faire eliminer tous les civils.\n");
        
-        System.out.println("8. Le gagnant est soit l'équipe des civils, soit les Undercover, soit Mr White, selon le déroulement du jeu.");
-        System.out.println("Amusez-vous bien et que le meilleur gagne !");
+        System.out.println("8. Le gagnant est soit l'equipe des civils, soit les Undercover, soit Mr White, selon le deroulement du jeu.\n");
+        System.out.println("Amusez-vous bien et que le meilleur gagne !\n");
     }
 }
 

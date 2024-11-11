@@ -23,19 +23,23 @@ public class Role {
         roles.add("MrWhite");
     }
     
-    public void setNomRole() {
-        this.nomRole = donnerRoleAleatoire();
+    public void setNomRole(String roleName) {
+        if (roles.contains(roleName)) {
+            this.nomRole = roleName;
+        } else {
+            this.nomRole = donnerRoleAleatoire(); 
+        }
     }
     
-    public String getNomRole() {
+    public String getNomRole() 
+    {
         return nomRole;
     }
     
-    public String donnerRoleAleatoire() {
-        String nom;
+    public String donnerRoleAleatoire() 
+    {
         Random rand = new Random();
-        nom= roles.get(rand.nextInt(roles.size()));
-        return nom;
+        return roles.get(rand.nextInt(roles.size()));
     }
     
     public void addRole(String role) {

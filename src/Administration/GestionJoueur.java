@@ -15,28 +15,52 @@ public class GestionJoueur {
     private int nombreUndercover=1;
     private int nombreMrsWhite=1;
 
-    public GestionJoueur(){
+    public GestionJoueur()
+    {
         GestionJoueur.joueurs=new ArrayList<>();
     }
-     public void ajouterJoueur(Joueur joueur) {
+    
+     public void ajouterJoueur(Joueur joueur) 
+     {
         joueurs.add(joueur);
-    }
+     }
 
-    public static ArrayList<Joueur> getJoueurs() {
+    public static ArrayList<Joueur> getJoueurs()
+    {
         return joueurs;
     }
     
-    public void setNombreCivil(int n){
+    public void setNombreCivil(int n)
+    {
         this.nombreCivil=n;
     }
-    public void setNombreUndercover(int n){
+    
+    public void setNombreUndercover(int n)
+    {
         this.nombreUndercover=n;
     }
-    public void setNombreMrWhite(int n){
+    
+    public void setNombreMrWhite(int n)
+    {
         this.nombreMrsWhite=n;
     }
-    public void gestionNombreJoueurs(){
-        Admin admin = null;
+    
+    public int getNombreCivil()
+    {
+        return this.nombreCivil;
+    }
+    
+    public int getNombreUndercover()
+    {
+        return this.nombreUndercover;
+    }
+    
+    public int getNombreMrWhite()
+    {
+        return this.nombreMrsWhite;
+    }
+    
+    public void gestionNombreJoueurs(Admin admin){
         if (admin.getNombreJoueur()>10)
         {
             setNombreMrWhite(2);

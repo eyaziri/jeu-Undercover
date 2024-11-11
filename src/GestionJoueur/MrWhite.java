@@ -10,9 +10,13 @@ import java.util.Scanner;
  * @author eyazi
  */
 public class MrWhite extends Joueur {
-    public MrWhite(String nom) {
+    public MrWhite() {
         super();
         this.mot="YOU ARE MrWhite !!!";
+        System.out.println("Donner le nom de joueur :");
+        Scanner sc = new Scanner(System.in);
+        String n = sc.nextLine();
+        this.nom = n;
     }
        
       public boolean devinerMot(String motCivil) {

@@ -6,14 +6,21 @@ package GestionJoueur;
 
 import java.util.ArrayList;
 import Administration.*;
+import java.util.Scanner;
 
 /**
  *
  * @author eyazi
  */
 public class Civil extends Joueur{
-    public Civil(String nom) {
+    
+    public Civil() {
         super();
+        System.out.println("Donner le nom de joueur :");
+        Scanner sc = new Scanner(System.in);
+        String n = sc.nextLine();
+        this.nom = n;
+        
     }
      
 
