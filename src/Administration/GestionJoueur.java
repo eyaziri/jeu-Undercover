@@ -29,11 +29,6 @@ public class GestionJoueur {
         {
             joueurs.remove(joueur);
         }
-
-    public static ArrayList<Joueur> getJoueurs()
-    {
-        return joueurs;
-    }
     
     public void setNombreCivil(int n)
     {
@@ -104,5 +99,10 @@ public class GestionJoueur {
         {
             System.out.println(joueurs.get(i).getNom());
         }
+    }
+    
+    public static ArrayList<Joueur> getListeJoueurs()
+    {
+        return joueurs;
     }
 }

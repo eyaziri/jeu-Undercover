@@ -48,55 +48,73 @@ import java.util.Scanner;
         }
     }
     
-    public void eliminerJoueurApresVote(GestionJoueur gestionJoueur) {
-    List<Joueur> joueurs = gestionJoueur.getJoueurs();
-    Joueur joueurElimine = null;
-    String mot = null; // Initialisation du mot à l'extérieur de la boucle
-    
-    // Trouver le joueur ayant reçu le plus de votes
-    for (Joueur joueur : joueurs) {
-        if (joueurElimine == null || joueur.getNombreDeVotesRecus() > joueurElimine.getNombreDeVotesRecus()) {
-            joueurElimine = joueur;
-        }
-    }
-    
-    if (joueurElimine != null) {
-        String role = joueurElimine.getRole().toLowerCase();
-        
-        if (role.equals("civile") || role.equals("undercover")) {
-            System.out.println("Le joueur " + joueurElimine.getNom() + " est elimine avec " + joueurElimine.getNombreDeVotesRecus() + " votes." + " qui a le role de : " + joueurElimine.getRole());
-            joueurElimine.estEliminer(gestionJoueur);
-            elimination.ajouterJoueurElimine(joueurElimine);
-            gestionJoueur.supprimerJoueur(joueurElimine);
-        } else if (role.equals("mrwhite")) {
-            // Récupérer le mot d'un joueur civile
-            for (int i = 0; i < gestionJoueur.longueurListe(); i++) {
-                Joueur joueur = gestionJoueur.getJoueurs().get(i);
-                if (joueur.getRole().equalsIgnoreCase("civile")) {
-                    mot = joueur.getMot();
-                    break; // On arrête la recherche dès qu'on trouve un mot chez un civile
-                }      
+   public void eliminerJoueurApresVote(GestionJoueur gestionJoueur,PhaseVote phaseVote) {
+        List<Joueur> joueurs = gestionJoueur.getListeJoueurs();
+        Joueur joueurElimine = null;
+        String mot = null; 
+
+        for (Joueur joueur : joueurs) 
+        {
+            if (joueurElimine == null || joueur.getNombreDeVotesRecus() > joueurElimine.getNombreDeVotesRecus()) 
+            {
+                joueurElimine = joueur;
             }
-            
-            // Vérification du mot pour Mr. White
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Vous etes Mr. White. Essayez de deviner le mot associe : ");
-            String motDevine = sc.nextLine();
-            
-            if (mot != null && motDevine.equalsIgnoreCase(mot)) {
-                System.out.println("Felicitations, vous avez devine correctement et vous n'etes pas elimine.");
-            } else {
-                System.out.println("Echec. Vous avez ete elimine. Le mot correct etait : " + mot);
+        }
+
+        if (joueurElimine != null) 
+        {
+            String role = joueurElimine.getRole().toLowerCase();
+
+            if (role.equals("civile") || role.equals("undercover"))
+            {
+                System.out.println("Le joueur " + joueurElimine.getNom() + " est elimine avec " + joueurElimine.getNombreDeVotesRecus() + " votes." + " qui a le role de : " + joueurElimine.getRole());
                 joueurElimine.estEliminer(gestionJoueur);
+                joueurElimine.setEstVivant();
                 elimination.ajouterJoueurElimine(joueurElimine);
                 gestionJoueur.supprimerJoueur(joueurElimine);
+
+            } 
+            else if (role.equals("mrwhite")) 
+            {
+
+                for (Joueur joueur : joueurs) 
+                {
+                    if (joueur.getRole().equalsIgnoreCase("civile")) 
+                    {
+                        mot = joueur.getMot();
+                        break;
+                    }      
+                }
+
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Vous etes Mr. White. Essayez de deviner le mot associe : ");
+                String motDevine = null;
+
+                if (sc.hasNextLine()) 
+                {
+                    motDevine = sc.nextLine();
+                }
+
+                if (mot != null && motDevine != null && motDevine.equalsIgnoreCase(mot)) 
+                {
+                    System.out.println("Felicitations, vous avez devine correctement .");
+                    phaseVote.terminerPhase();
+                } 
+                else 
+                {
+                    System.out.println("Echec. Vous avez ete elimine. Le mot correct etait : " + mot);
+                    joueurElimine.estEliminer(gestionJoueur);
+                    joueurElimine.setEstVivant();
+                    elimination.ajouterJoueurElimine(joueurElimine);
+                    gestionJoueur.supprimerJoueur(joueurElimine);
+                }
             }
-            sc.close();  
+        } 
+        else 
+        {
+            System.out.println("Aucun joueur n'a ete trouve pour elimination.");
         }
-    } else {
-        System.out.println("Aucun joueur n'a ete trouve pour elimination.");
     }
-}
 
     
     

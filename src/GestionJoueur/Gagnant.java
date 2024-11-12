@@ -10,66 +10,64 @@ package GestionJoueur;
  */
 
 import java.util.ArrayList;
-import java.util.List;
 
 
-public class Gagnant {
-    private String gagnant;
 
+public class Gagnant extends Joueur {
+    
     public Gagnant() {
-        this.gagnant = null;
+        super();
     }
 
-
-    public void determinerGagnant(ArrayList<Joueur> joueursElimines) {
+    public void determinerGagnant(ArrayList<Joueur> joueurs) {
         int undercoverCount = 0;
         int civilCount = 0;
         int mrsWhiteCount = 0;
-
         boolean mrsWhiteEnVie = false;
 
-        for (Joueur joueur : joueursElimines) {
+        for (Joueur joueur : joueurs) {
             if (joueur instanceof Undercover) {
                 undercoverCount++;
             } else if (joueur instanceof Civil) {
                 civilCount++;
-            }
-            else if (joueur instanceof MrWhite) {
+            } else if (joueur instanceof MrWhite) {
                 mrsWhiteCount++;
-            }
-            else if (joueur instanceof MrWhite) {
                 mrsWhiteEnVie = true;
             }
         }
 
         if (undercoverCount == 0 && civilCount > 0) {
-            this.gagnant = "Civils";
-            System.out.println("Les Civils ont gagne !");
+           
+            for (Joueur joueur : joueurs) {
+                if (joueur.getRole().equalsIgnoreCase("Civile")) {
+                    this.setNom(joueur.getNom());
+                    break;
+                }
+            }
         } else if (undercoverCount > 0 && civilCount == 0 && !mrsWhiteEnVie) {
-            this.gagnant = "Undercover";
-            System.out.println("Les Undercover ont gagne !");
+            
+            for (Joueur joueur : joueurs) {
+                if (joueur.getRole().equalsIgnoreCase("Undercover")) {
+                    this.setNom(joueur.getNom());
+                    break;
+                }
+            }
         } else if (mrsWhiteEnVie && undercoverCount == 0 && civilCount <= mrsWhiteCount) {
-            this.gagnant = "Mrs. White";
-            System.out.println("Mr. White a gagne !");
-        } else {
-            System.out.println("Le jeu est encore en cours.");
-        }
+      
+            for (Joueur joueur : joueurs) {
+                if (joueur.getRole().equalsIgnoreCase("MrWhite")) {
+                    this.setNom(joueur.getNom());
+                    break;
+                }
+            }
+        } 
     }
 
     public String getGagnant() {
-        return gagnant;
+        return this.getNom();
     }
 
-    public void reinitialiserGagnant() {
-        this.gagnant = null;
-        System.out.println("Le gagnant a ete renitialise.");
-    }
-    
     public void afficherGagnant() {
-        if (gagnant != null) {
-            System.out.println("Le gagnant de cette partie est : " + gagnant);
-        } else {
-            System.out.println("Il n'y a pas encore de gagnant.");
-        }
+        System.out.println("Le gagnant de cette partie est : " + this.getNom());
     }
 }

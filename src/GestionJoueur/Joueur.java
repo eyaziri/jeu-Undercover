@@ -8,6 +8,7 @@ import Administration.ListeMots;
 import Administration.Role;
 import Forum.*;
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -25,6 +26,7 @@ import java.util.Scanner;
             protected String mot;
             protected int nombreDeVotesRecus=0;
             protected boolean aVote = false;
+            protected boolean estVivant =true;
 
              public Joueur() 
              {
@@ -39,6 +41,14 @@ import java.util.Scanner;
             public int getIdJoueur()
             {
                 return idJoueur;
+            }
+            public void setEstVivant()
+            {
+                this.estVivant=false;
+            }
+            public boolean getEstVivant()
+            {
+                return this.estVivant;
             }
 
             public void setNom(String nom)
@@ -78,18 +88,31 @@ import java.util.Scanner;
                 return this.nombreDeVotesRecus;
             }
 
-            public Message EcrireMessage() {
+            public Message EcrireMessage(HistoriqueMessage historiqueMessage) 
+            {
                 Scanner sc = new Scanner(System.in);
                 System.out.println("\n - Bonjour " + this.nom + ", donnez une description du mot :\n");
 
-                String contenu = sc.nextLine();
+                String contenu;
+                try {
+                    contenu = sc.nextLine();
+                    if (contenu.isEmpty()) {
+                        throw new NoSuchElementException();
+                    }
+                } catch (NoSuchElementException e) {
+                    System.out.println("Aucune saisie n'a ete detectee. Message par defaut attribue.");
+                    contenu = "Message non specifie";
+                }
 
-                Message msg = new Message(contenu, this);  
-                msg.setDatePublication(LocalDate.now());  
+                Message msg = new Message(contenu, this);
+                msg.setDatePublication(LocalDate.now());
+                historiqueMessage.enregisterMessage(msg);
 
-                System.out.println("\n ->   Votre message a ete publie le : " + msg.getDatePublication()+"\n");
+                System.out.println("\n ->   Votre message a ete publie le : " + msg.getDatePublication() + "\n");
                 return msg;
             }
+
+
 
             public void setnombreDeVotesRecus()
             {
@@ -107,26 +130,35 @@ import java.util.Scanner;
              }
 
 
-             public void estEliminer(GestionJoueur gestionJoueur) {
-                if (this.getRole().equalsIgnoreCase("Civil") || this.getRole().equalsIgnoreCase("Undercover")) {
+             public void estEliminer(GestionJoueur gestionJoueur) 
+             {
+                if (this.getRole().equalsIgnoreCase("Civil") || this.getRole().equalsIgnoreCase("Undercover")) 
+                {
                     System.out.println("\nLe joueur " + this.nom + " est maintenant elimine car il a recu le plus de votes.");
-                } else if (this.getRole().equalsIgnoreCase("Mr.White")) {
+                } 
+                else if (this.getRole().equalsIgnoreCase("Mr.White")) 
+                {
                     Scanner sc = new Scanner(System.in);
                     String motDevine;
                     System.out.println("\nVous etes Mr. White. Essayez de deviner le mot associe : ");
                     motDevine = sc.nextLine();
+                    
                     for (int i = 0; i < gestionJoueur.longueurListe(); i++)
                     {
-                            Joueur joueur = gestionJoueur.getJoueurs().get(i);
+                            Joueur joueur = gestionJoueur.getListeJoueurs().get(i);
+                            
                             if(joueur.getRole().equalsIgnoreCase("civile"))
                             {
                                 String mot=joueur.getMot();
                                 break;
                             }      
                     }
-                    if (motDevine.equalsIgnoreCase(mot)) {
+                    if (motDevine.equalsIgnoreCase(mot))
+                    {
                         System.out.println("\nFelicitations ! Vous avez devine correctement, vous n'etes pas elimine");
-                    } else {
+                    } 
+                    else 
+                    {
                         System.out.println("\nEchec. Le mot etait " + mot + ". Vous etes elimine.");
                     }
                 }

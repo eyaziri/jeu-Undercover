@@ -47,7 +47,7 @@ public class Vote {
     }
     
     public Joueur trouverJoueurParNom(String nom) {
-        for (Joueur joueur : GestionJoueur.getJoueurs()) {
+        for (Joueur joueur : GestionJoueur.getListeJoueurs()) {
             if (joueur.getNom().equalsIgnoreCase(nom)) {
                 return joueur;
             }

@@ -29,7 +29,7 @@ public class Elimination {
         joueursElimines.add(joueur);
     }
 
-    public List<Joueur> getJoueursElimines() {
+    public ArrayList<Joueur> getJoueursElimines() {
         return joueursElimines;
     }
 }
