@@ -164,5 +164,20 @@ import java.util.Scanner;
                 }
             }
 
-
+             public void recevoirVote()
+             {
+                 this.nombreDeVotesRecus++;
+             }
+             
+             public void reinitialiserVotes()
+             {
+                 this.nombreDeVotesRecus=0;
+             }
+             public boolean devinerMot(String motCivil) {
+                System.out.println("donner moi le mot a votre avis :");
+                Scanner sc = new Scanner(System.in);
+                String motMrWhite=sc.next();
+                return (motMrWhite.equals(motCivil)) ;
+              }
+    
         }

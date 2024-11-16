@@ -5,6 +5,7 @@
 package Administration;
 import java.util.ArrayList;
 import GestionJoueur.Joueur;
+import java.util.Scanner;
 /**
  *
  * @author eyazi
@@ -20,10 +21,31 @@ public class GestionJoueur {
         GestionJoueur.joueurs=new ArrayList<>();
     }
     
-     public void ajouterJoueur(Joueur joueur) 
-     {
-        joueurs.add(joueur);
-     }
+     public void ajouterJoueur(Joueur joueur) {
+        Scanner scanner = new Scanner(System.in);
+        String nom = joueur.getNom();
+
+       /*
+        while (estNomDejaUtilise(nom)) {
+            System.out.println("Un joueur avec le nom \"" + nom + "\" existe deja !! \n Veuillez entrer un autre nom :");
+            nom = scanner.nextLine();
+        }
+*/
+
+        joueur.setNom(nom); 
+        joueurs.add(joueur); 
+    }
+
+   
+    private boolean estNomDejaUtilise(String nom) {
+        for (Joueur j : joueurs) {
+            if (j.getNom().equals(nom)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
      
      public void supprimerJoueur(Joueur joueur) 
         {

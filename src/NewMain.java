@@ -8,6 +8,7 @@ import Administration.GestionPartie;
 
 /**
  *
+ * 
  * @author eyazi
  */
 public class NewMain {

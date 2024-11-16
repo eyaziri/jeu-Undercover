@@ -71,23 +71,30 @@ public class PhaseVote {
         if (nombreDeJoueurRestantMrWhite == 0) {
             if (nombreDeJoueurRestantCivil >= nombreDeJoueurRestantUndercover) {
                 System.out.println("Les Civils ont gagne !");
-                gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+                gagnant=gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
                 score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
                 this.terminerPhase();
                 
             } else if (nombreDeJoueurRestantCivil < nombreDeJoueurRestantUndercover) {
                 System.out.println("Les Undercover ont gagne !");
-                gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+                gagnant=gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
                 score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
                 this.terminerPhase();
                 
                 
             }
-        } 
+        }
+        else if (((nombreDeJoueurRestantMrWhite == 1)&&(nombreDeJoueurRestantCivil==1)&&(nombreDeJoueurRestantUndercover==0))||((nombreDeJoueurRestantMrWhite == 1)&&(nombreDeJoueurRestantUndercover==1)&&(nombreDeJoueurRestantCivil==0)))
+        {
+            System.out.println("Les MrWhite ont gagne !");
+            gagnant=gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+            score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
+            this.terminerPhase();
+        }
         else if ((nombreDeJoueurRestantMrWhite >= 1)&&(nombreDeJoueurRestantCivil==0)&&(nombreDeJoueurRestantUndercover==0))
         {
             System.out.println("Les MrWhite ont gagne !");
-            gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+            gagnant=gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
             score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
             this.terminerPhase();
         }
