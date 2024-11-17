@@ -51,4 +51,11 @@ public class Message {
     {
         System.out.println("le message : "+this.contenu+" ,    est envoye par : "+this.auteur.getNom() + ",   le : " +this.datePublication);
     }
+    
+    @Override
+    public String toString() {
+        return "Le message : " + contenu + " , est envoyé par : " + 
+               (auteur != null ? auteur.getNom() : "Anonyme") + 
+               " , le : " + datePublication;
+    }
 }

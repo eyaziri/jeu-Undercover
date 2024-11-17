@@ -179,5 +179,22 @@ import java.util.Scanner;
                 String motMrWhite=sc.next();
                 return (motMrWhite.equals(motCivil)) ;
               }
+             
+             
+              public Message EcrireMessages(HistoriqueMessage historiqueMessage,String contenu){
+                Message msg = new Message(contenu, this);
+                msg.setDatePublication(LocalDate.now());
+                historiqueMessage.enregisterMessage(msg);
+
+                System.out.println("\n ->   Votre message a ete publie le : " + msg.getDatePublication() + "\n");
+                return msg;
+              } 
+              
+               @Override
+            public String toString() {
+               return "Le Joueur : " + this.getNom() + " , est de role : " + this.getRole();
+                      
+           }
     
         }
+

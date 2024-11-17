@@ -64,7 +64,6 @@ public class huitiemePage extends javax.swing.JFrame {
         jTextField2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
 
         jTextField5.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jTextField5.setText("        ------------------");
         jTextField5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
 
         jTextField6.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N

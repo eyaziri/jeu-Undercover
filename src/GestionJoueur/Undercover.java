@@ -14,10 +14,10 @@ public class Undercover extends Joueur{
 
     public Undercover() {
         super();
-         System.out.println("Donner le nom de joueur :");
+         /*System.out.println("Donner le nom de joueur :");
         Scanner sc = new Scanner(System.in);
         String n = sc.nextLine();
-        this.nom = n;
+        this.nom = n;*/
     }
   
 }

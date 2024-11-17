@@ -14,6 +14,12 @@ import GestionJoueur.MrWhite;
 import GestionJoueur.Undercover;
 import javax.swing.JOptionPane;
 import View.quatriemeRolePage;
+import java.util.ArrayList;
+import java.util.Scanner;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 
 
 /**
@@ -25,10 +31,16 @@ public class troisiemePage extends javax.swing.JFrame {
     private int playersRemaining ;
     private String rolej;
     private GestionJoueur gestionJoueur; 
+    private ArrayList<String>names;
+    
+    
+    
+    
     
     public troisiemePage(GestionJoueur gestionJoueur) 
     {
         initComponents();
+        this.names=new ArrayList<>();
         this.gestionJoueur=gestionJoueur;
         initializePlayerCount() ;
     }
@@ -43,11 +55,15 @@ public class troisiemePage extends javax.swing.JFrame {
     {
     playersRemaining =  deuxiemePage.admin.getNombreJoueur();
     updatePlayerCounterDisplay();
+    names = new ArrayList<>();
+    for (int i = 0; i < playersRemaining; i++) {
+        names.add(""); // Ajouter des chaînes vides pour chaque joueur
+    }
     jButton3.setEnabled(false); 
-}
-    private void updatePlayerCounterDisplay() {
-    jLabel1.setText("Remplissez les informations du joueur " + ( deuxiemePage.admin.getNombreJoueur() - playersRemaining + 1));
-}
+    }
+        private void updatePlayerCounterDisplay() {
+        jLabel1.setText("Remplissez les informations du joueur " + ( deuxiemePage.admin.getNombreJoueur() - playersRemaining + 1));
+    }
  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -151,26 +167,54 @@ public class troisiemePage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-       this.initializePlayerCount();
-
-  
-    int totalCivil = 0, totalUndercover = 0, totalMrWhite = 0;
+    
+    int totalCivil = 0;
+    int totalUndercover = 0;
+    int totalMrWhite = 0;
 
     ListeMots listeMotPartie = new ListeMots();
     Role roleGenerator = new Role();
+    String motCivil = null;
+    String motUndercover = null;
 
-    String motCivil = null, motUndercover = null;
+    
+    String playerName = jTextField2.getText().trim();
 
-    while (playersRemaining > 0) {
-        String playerName = jTextField2.getText().trim();
+    if (playersRemaining > 0 && !playerName.isEmpty()) {
+        int currentIndex = deuxiemePage.admin.getNombreJoueur() - playersRemaining;
 
+        
+        if (currentIndex < names.size()) {
+            names.set(currentIndex, playerName);
+        } else {
+            names.add(playerName);
+        }
+
+        System.out.println(playerName + " est ajoute");
+
+        
+        while (names.size() > currentIndex + 1) {
+            names.remove(names.size() - 1);
+        }
+
+        jTextField2.setText("");
+        playersRemaining--;
+        updatePlayerCounterDisplay();
+
+        if (playersRemaining == 0) {
+            jButton3.setEnabled(true);
+        }
+    }
+
+    int i = 0;
+    while (playersRemaining == 0 && i < names.size()) {
         Joueur joueurRole;
         String role = roleGenerator.donnerRoleAleatoire();
 
         if (role.equals("Civile") && totalCivil < gestionJoueur.getNombreCivil()) {
             joueurRole = new Civil();
             joueurRole.setRole("Civile");
-            joueurRole.setNom(playerName);
+            joueurRole.setNom(names.get(i));
 
             if (motCivil == null) {
                 listeMotPartie.associerMotDeCivilEtDeUndercover(joueurRole);
@@ -183,7 +227,7 @@ public class troisiemePage extends javax.swing.JFrame {
         } else if (role.equals("Undercover") && totalUndercover < gestionJoueur.getNombreUndercover()) {
             joueurRole = new Undercover();
             joueurRole.setRole("Undercover");
-            joueurRole.setNom(playerName);
+            joueurRole.setNom(names.get(i));
 
             if (motUndercover == null) {
                 listeMotPartie.associerMotDeCivilEtDeUndercover(joueurRole);
@@ -195,31 +239,45 @@ public class troisiemePage extends javax.swing.JFrame {
             totalUndercover++;
         } else if (role.equals("MrWhite") && totalMrWhite < gestionJoueur.getNombreMrWhite()) {
             joueurRole = new MrWhite();
-            joueurRole.setNom(playerName);
+            joueurRole.setNom(names.get(i));
             joueurRole.setRole("MrWhite");
             joueurRole.setMot("Tu es Mr White!");
             totalMrWhite++;
         } else {
-            continue;
+            continue; 
         }
 
+      
         gestionJoueur.ajouterJoueur(joueurRole);
         String roleJoueur = joueurRole.getRole();
         String motJoueur = joueurRole.getMot();
-        rolej= joueurRole.getRole();
-        quatriemeRolePage quatriemeRolePage = new quatriemeRolePage(motJoueur,roleJoueur,gestionJoueur,this);
-        quatriemeRolePage.setVisible(true);
-        this.setVisible(false);
-        playersRemaining--;
-        updatePlayerCounterDisplay();
-        JOptionPane.showMessageDialog(this, "Joueur " + playerName + " ajouté avec succès.");
-        jTextField2.setText(""); 
+        String nom=joueurRole.getNom();
+
+    
+        quatriemeRolePage quatriemeRolePage = new quatriemeRolePage(nom,motJoueur, roleJoueur, gestionJoueur, this);
+        new Timer(2000,e ->{
+            quatriemeRolePage.setVisible(true);
+            new Timer(30000,e2 ->{
+                quatriemeRolePage.setVisible(false);
+                ((Timer)e2.getSource()).stop();
+                }).start();
+                ((Timer)e.getSource()).stop();
+
+        }).start();
+
+        JOptionPane.showMessageDialog(this, "Joueur " + names.get(i) + " ajouté avec succès.");
+
+        // Afficher une notification pour le joueur ajouté
+
+        i++;
     }
 
+    // Une fois tous les joueurs assignés, ouvrir la cinquième page
     if (playersRemaining <= 0) {
         jButton3.setEnabled(true);
+        this.setVisible(false);
         JOptionPane.showMessageDialog(this, "Tous les joueurs ont été ajoutés.");
-        cinquiemePage cinq = new cinquiemePage();
+        cinquiemePage cinq = new cinquiemePage(gestionJoueur);
         cinq.setVisible(true);
     }
 
@@ -227,7 +285,7 @@ public class troisiemePage extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        cinquiemePage cinq= new cinquiemePage();
+        cinquiemePage cinq= new cinquiemePage(gestionJoueur);
         cinq.show();
         dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -260,29 +318,10 @@ public class troisiemePage extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(deuxiemePage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(deuxiemePage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(deuxiemePage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(deuxiemePage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                GestionJoueur gestionJoueur = new GestionJoueur();
-                new troisiemePage(gestionJoueur).setVisible(true);
+                
             }
         });
         

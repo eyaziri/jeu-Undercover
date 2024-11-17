@@ -34,5 +34,19 @@ public class Discussion {
             message.afficherMessage();  
         }
     }
-}
+    
+    }
+    
+    public String AfficherMessages() {
+    if (messages.isEmpty()) {
+        return "Aucun message dans la discussion.";
+    } else {
+        StringBuilder message = new StringBuilder();
+        for (Message msg : messages) {
+            message.append(msg.toString()).append("\n"); 
+        }
+        return message.toString();
+    }
+    }
+    
 }

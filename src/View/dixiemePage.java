@@ -86,8 +86,8 @@ public class dixiemePage extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        cinquiemePage cinq= new cinquiemePage();
-        cinq.show();
+       // cinquiemePage cinq= new cinquiemePage();
+        //cinq.show();
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 

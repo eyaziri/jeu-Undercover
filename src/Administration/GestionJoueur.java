@@ -22,17 +22,13 @@ public class GestionJoueur {
     }
     
      public void ajouterJoueur(Joueur joueur) {
-        Scanner scanner = new Scanner(System.in);
-        String nom = joueur.getNom();
-
+      
        /*
         while (estNomDejaUtilise(nom)) {
             System.out.println("Un joueur avec le nom \"" + nom + "\" existe deja !! \n Veuillez entrer un autre nom :");
             nom = scanner.nextLine();
         }
-*/
-
-        joueur.setNom(nom); 
+        */
         joueurs.add(joueur); 
     }
 
@@ -126,5 +122,18 @@ public class GestionJoueur {
     public static ArrayList<Joueur> getListeJoueurs()
     {
         return joueurs;
+    }
+    
+    public String affichageListeJoueurs()
+    {
+        for(int i=0;i<joueurs.size();i++)
+        {
+            return(joueurs.get(i).getNom());
+        }
+        StringBuilder joueur = new StringBuilder();
+        for (Joueur j : joueurs) {
+            joueur.append(j.toString()).append("\n"); 
+        }
+        return joueur.toString();
     }
 }

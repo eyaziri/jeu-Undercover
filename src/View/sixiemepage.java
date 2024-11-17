@@ -4,17 +4,67 @@
  */
 package View;
 
+import Administration.GestionJoueur;
+import Forum.Forum;
+import Forum.HistoriqueMessage;
+import GestionJoueur.Gagnant;
+import GestionJoueur.Joueur;
+import GestionJoueur.Score;
+import Vote.Elimination;
+import Vote.GestionVotes;
+import Vote.PhaseVote;
+import Vote.Vote;
+import java.util.ArrayList;
+
 /**
  *
  * @author eyazi
  */
 public class sixiemepage extends javax.swing.JFrame {
-
+    private PhaseVote phaseVote;
+    private GestionJoueur gestionJoueur;
+    private int playersRemaining ;
+    private ArrayList<String>votes;
+    private HistoriqueMessage historiqueMessage;
+    private Forum forum;
+    private Score score;
+    private Gagnant gagnant;
+    private Elimination elimination;
+    private GestionVotes gestionVote;
+    private Joueur joueur1;
     /**
      * Creates new form sixiemepage
      */
-    public sixiemepage() {
+    public sixiemepage(GestionJoueur gestionJoueur,Forum forum,HistoriqueMessage historiqueMessage)  {
+        this.phaseVote = new PhaseVote();
+        this.gestionJoueur= gestionJoueur;
+        this.votes=new ArrayList<>();
+        this.forum=forum;
+        this.historiqueMessage=historiqueMessage;
         initComponents();
+        initializePlayerCount() ;
+    }
+    private void initializePlayerCount() 
+    {
+    playersRemaining =  deuxiemePage.admin.getNombreJoueur();
+    updatePlayerCounterDisplay();
+    votes = new ArrayList<>();
+    score=new Score();
+    gagnant=new Gagnant();
+    elimination=new Elimination();
+    gestionVote=new GestionVotes();
+    
+    for (int i = 0; i < playersRemaining; i++) {
+        votes.add(""); 
+    }
+    }
+    private void updatePlayerCounterDisplay() {
+    int currentIndex = deuxiemePage.admin.getNombreJoueur() - playersRemaining;
+    if (currentIndex >= 0 && currentIndex < gestionJoueur.getListeJoueurs().size()) {
+        jLabel7.setText(gestionJoueur.getListeJoueurs().get(currentIndex).getNom());
+    } else {
+        jLabel7.setText("Aucun joueur à afficher.");
+    }
     }
 
     /**
@@ -27,39 +77,16 @@ public class sixiemepage extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
         jTextField12 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(161, 175, 246));
 
-        jTextField2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jTextField2.setText("       -------------------        ");
-        jTextField2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
-
-        jTextField6.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jTextField6.setText("       -------------------        ");
-        jTextField6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
-            }
-        });
-
         jTextField12.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jTextField12.setText("       -------------------        ");
         jTextField12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
         jTextField12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -67,93 +94,50 @@ public class sixiemepage extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(0, 102, 153));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Passez au résultat du premier vote");
-        jButton3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Yu Gothic UI Semibold", 0, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 102, 153));
-        jLabel3.setText("----  Le vote commence  ----");
+        jLabel3.setText("----  La session de vote ----");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("\"A\"  a qui vous voulez voter ?");
+        jLabel6.setText("A qui vous voulez voter ?");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("\"C\"  a qui vous voulez voter ?");
-
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("\"B\"  a qui vous voulez voter ?");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addContainerGap(209, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(315, 315, 315))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(251, 251, 251))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 441, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(182, 182, 182))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(198, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(312, 312, 312))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(165, 165, 165))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(311, 311, 311))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(217, 217, 217))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(209, 209, 209))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(313, 313, 313))))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(257, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(207, 207, 207)))
+                        .addGap(154, 154, 154))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addGap(83, 83, 83)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(26, 26, 26)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(260, 260, 260)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(274, Short.MAX_VALUE)))
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(234, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -170,24 +154,75 @@ public class sixiemepage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
-
     private void jTextField12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField12ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField12ActionPerformed
+            String vote = jTextField12.getText().trim();
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        sixiemePageB sixB= new sixiemePageB();
-        sixB.show();
-        dispose();
-    }//GEN-LAST:event_jButton3ActionPerformed
+    if (playersRemaining > 0 && !vote.isEmpty()) {
+        int currentIndex = deuxiemePage.admin.getNombreJoueur() - playersRemaining;
+
+        
+        if (currentIndex < votes.size()) {
+            votes.set(currentIndex, vote);
+        } else {
+            votes.add(vote);
+        }
+
+        System.out.println(vote + " est une personne ajoute a la vote");
+
+        
+        while (votes.size() > currentIndex + 1) {
+            votes.remove(votes.size() - 1);
+        }
+
+        jTextField12.setText("");
+        playersRemaining--;
+        updatePlayerCounterDisplay();
+
+        if (playersRemaining == 0) {
+            
+            jTextField12.setEnabled(false); // Désactive le champ de saisie.
+        }
+    }
+    
+     System.out.println( " fin de vote");
+    Vote vote1 = new Vote();
+    for (int i = 0; i < votes.size(); i++) {
+        String nom = votes.get(i);
+        Joueur joueurTrouve = vote1.trouverJoueurParNom(nom);
+
+        if (joueurTrouve != null) {
+            joueur1=joueurTrouve;
+            joueurTrouve.setnombreDeVotesRecus();
+            System.out.println("Le joueur " + joueurTrouve.getNom() + " a reçu un vote.");
+        } else {
+            System.out.println("Joueur non trouvé pour le nom : " + nom);
+            // Vous pouvez ici afficher un message d'erreur ou demander une nouvelle saisie via l'interface.
+        }
+    }
+        gestionVote.eliminerJoueurApresVote(gestionJoueur,phaseVote);
+        System.out.println("\n\n La liste des Joueurs restants \n\n");
+        gestionJoueur.AffichageListeJoueurs();
+        
+        if(joueur1.getRole().equalsIgnoreCase("Civile"))
+        {
+            septiemePage sept =new septiemePage(gestionJoueur,joueur1.getRole(),joueur1.getNom());
+            sept.show();
+            dispose();
+        }
+        else if(joueur1.getRole().equalsIgnoreCase("Undercover"))
+        {
+            septiemePage sept =new septiemePage(gestionJoueur,joueur1.getRole(),joueur1.getNom());
+            sept.show();
+            dispose();
+        }
+        else if(joueur1.getRole().equalsIgnoreCase("MrWhite"))
+        {
+            huitiemePage sept =new huitiemePage();
+            sept.show();
+            dispose();
+        }
+    }//GEN-LAST:event_jTextField12ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -219,20 +254,16 @@ public class sixiemepage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new sixiemepage().setVisible(true);
+                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
 }
