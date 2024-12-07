@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="528.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.DeuxiemePageBController">
+   <children>
+      <Pane prefHeight="531.0" prefWidth="780.0" style="-fx-background-color: #a1aff6;">
+         <children>
+            <Label layoutX="251.0" layoutY="7.0" prefHeight="76.0" prefWidth="260.0" text="Réglement" textFill="#fffefe">
+               <font>
+                  <Font size="48.0" />
+               </font>
+            </Label>
+            <TextArea layoutX="61.0" layoutY="70.0" prefHeight="378.0" prefWidth="656.0" style="-fx-background-color: #a1aff6;" text="                      *************Bienvenue dans le jeu Undercover!************&#10;&#10;1- Les joueurs sont divises en trois roles : Undercover, Mrs White, et les civils.&#10;&#10;2- Les joueurs recoivent des mots . Les civils recoivent le meme mot et &#10;les Undercover recoivent des mots differents  Mr. White recoit - Mr. White &#10;&#10;3-  les joueurs peuvent discuter entre eux pour tenter de decouvrir les roles &#10;des autres joueurs.&#10;&#10;4- Les Mrs White doivent essayer de rester caches tout en faisant accuser&#10; les civils.&#10;&#10;5-  A chaque tour, une discussion a lieu, puis un vote est organise pour &#10;eliminer un joueur.&#10;&#10;6-  Si le joueur elimine est Mr. White, il a une derniere chance de deviner&#10; le mot des autres joueurs.&#10;&#10;-&gt;Si il devine correctementle mot , il gagne et le jeu se termine. Sinon,&#10; il est definitivement elimine.&#10;&#10;7-  Le jeu se termine lorsque tous les Mrs White sont elimines ou lorsqu'ils&#10; ont reussi a faire eliminer tous les civils.&#10;&#10;8-  Le gagnant est soit l'equipe des civils, soit les Undercover, soit Mr Whit&#10;e, selon le deroulement du jeu.&#10;&#10;Amusez-vous bien et que le meilleur gagne !">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </TextArea>
+            <Button fx:id="bouttonJouer" layoutX="288.0" layoutY="471.0" mnemonicParsing="false" onAction="#switchToSceneAccueil" prefHeight="46.0" prefWidth="202.0" style="-fx-background-color: #006699;" text="Jouer" textFill="#fffefe">
+               <font>
+                  <Font name="Arial" size="25.0" />
+               </font>
+               <effect>
+                  <ColorAdjust />
+               </effect>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

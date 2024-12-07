@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="premierPage" prefHeight="503.0" prefWidth="682.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PremierPageController">
+   <effect>
+      <ColorAdjust />
+   </effect>
+   <children>
+      <Pane prefHeight="531.0" prefWidth="780.0" style="-fx-background-color: #a1aff6;">
+         <children>
+            <ImageView fitHeight="345.0" fitWidth="475.0" layoutX="184.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/logo.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="premierBoutton" layoutX="291.0" layoutY="360.0" mnemonicParsing="false" onAction="#allerApage2" prefHeight="50.0" prefWidth="214.0" text="Start" textFill="#213ebe">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Button>
+            <Button fx:id="deuxiemeButton" layoutX="291.0" layoutY="432.0" mnemonicParsing="false" onAction="#allerAuPage2b" prefHeight="51.0" prefWidth="214.0" text="Réglement" textFill="#3200d7">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane prefHeight="531.0" prefWidth="780.0" style="-fx-background-color: #a1aff6;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CinquiemeBPageController">
+   <children>
+      <Label layoutX="24.0" layoutY="43.0" prefHeight="76.0" prefWidth="734.0" text="--- La description donnée par chaque joueur  ---" textFill="#fffefe">
+         <font>
+            <Font size="34.0" />
+         </font>
+      </Label>
+      <Button fx:id="passerAuVote" layoutX="275.0" layoutY="365.0" mnemonicParsing="false" onAction="#allerPage6" prefHeight="46.0" prefWidth="214.0" style="-fx-background-color: #006699;" text="Passer au vote" textFill="#fffefe">
+         <font>
+            <Font name="Arial Bold" size="25.0" />
+         </font>
+         <effect>
+            <ColorAdjust />
+         </effect>
+      </Button>
+      <TextArea fx:id="texteDescription" layoutX="71.0" layoutY="136.0" prefHeight="200.0" prefWidth="622.0">
+         <font>
+            <Font size="22.0" />
+         </font></TextArea>
+      <ImageView fitHeight="100.0" fitWidth="780.0" layoutX="1.0" layoutY="433.0">
+         <image>
+            <Image url="@../images/image-removebg-preview%20(9).png" />
+         </image>
+      </ImageView>
+   </children>
+</Pane>
