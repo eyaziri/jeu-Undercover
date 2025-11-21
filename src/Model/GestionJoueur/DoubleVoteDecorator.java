@@ -3,31 +3,45 @@ package Model.GestionJoueur;
 import Logging.LoggerSingleton;
 import Model.Vote.Vote;
 
-/**
- * Décorateur qui permet à un joueur de compter son vote double
- */
 public class DoubleVoteDecorator extends JoueurDecorator {
 
     public DoubleVoteDecorator(Joueur joueur) {
         super(joueur);
-        LoggerSingleton.getInstance().log("STATE", "Joueur " + joueur.getNom() + " décoré avec Double Vote");
-    }
-
-    /**
-     * Ajoute deux votes au joueur ciblé
-     */
-    public void ajouterVote(Vote vote) {
-        super.joueur.setnombreDeVotesRecus();
-        super.joueur.setnombreDeVotesRecus();
-        System.out.println(joueur.getNom() + " utilise un DOUBLE VOTE !");
-        LoggerSingleton.getInstance().log("STATE", joueur.getNom() + " a utilisé Double Vote");
+        LoggerSingleton.getInstance().log("DECORATOR", "Joueur " + joueur.getNom() + " décoré avec Double Vote");
     }
 
     @Override
     public void voter(Joueur cible) {
-        System.out.println(joueur.getNom() + " utilise un DOUBLE VOTE !");
-        cible.setnombreDeVotesRecus();
-        cible.setnombreDeVotesRecus();
+        System.out.println("🎯 " + joueur.getNom() + " utilise un DOUBLE VOTE !");
+
+        // Premier vote normal
+        super.voter(cible);
+        // Deuxième vote (double)
+        super.voter(cible);
+
+        LoggerSingleton.getInstance().log("DECORATOR",
+                "Double vote appliqué par " + joueur.getNom() + " sur " + cible.getNom() +
+                        " (Total votes: " + cible.getNombreDeVotesRecus() + ")");
     }
 
+    // S'assurer que toutes les méthodes délèguent au joueur décoré
+    @Override
+    public String getNom() {
+        return joueur.getNom();
+    }
+
+    @Override
+    public String getRole() {
+        return joueur.getRole();
+    }
+
+    @Override
+    public boolean isVivant() {
+        return joueur.isVivant();
+    }
+
+    @Override
+    public void setEstVivant() {
+        joueur.setEstVivant();
+    }
 }

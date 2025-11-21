@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Model.Administration;
+import Logging.LoggerSingleton;
 import Model.GestionJoueur.DoubleVoteDecorator;
 import Model.GestionJoueur.ImmuniteDecorator;
 import Model.GestionJoueur.Joueur;
@@ -218,26 +219,56 @@ public class GestionJoueur {
 
 
     public void donnerDecorateurUnique() {
-        if (joueurs.isEmpty()) return;
+        if (joueurs.isEmpty()) {
+            System.out.println("❌ Aucun joueur disponible pour donner un pouvoir spécial.");
+            return;
+        }
 
         Random rand = new Random();
         int index = rand.nextInt(joueurs.size());
-        Joueur joueur = joueurs.get(index);
+        Joueur joueurOriginal = joueurs.get(index);
 
         boolean doubleVote = rand.nextBoolean();
-
-        Joueur decorateur;
+        Joueur joueurAvecPouvoir;
 
         if (doubleVote) {
-            decorateur = new DoubleVoteDecorator(joueur);
-            System.out.println("\n🎁 " + joueur.getNom() + " a reçu le pouvoir DOUBLE VOTE !");
+            joueurAvecPouvoir = new DoubleVoteDecorator(joueurOriginal);
+            System.out.println("\n🎁 " + joueurOriginal.getNom() + " a reçu le pouvoir DOUBLE VOTE !");
+            LoggerSingleton.getInstance().log("DECORATOR",
+                    "DoubleVoteDecorator appliqué à: " + joueurOriginal.getNom());
         } else {
-            decorateur = new ImmuniteDecorator(joueur);
-            System.out.println("\n🎁 " + joueur.getNom() + " a reçu le pouvoir IMMUNITÉ !");
+            joueurAvecPouvoir = new ImmuniteDecorator(joueurOriginal);
+            System.out.println("\n🎁 " + joueurOriginal.getNom() + " a reçu le pouvoir IMMUNITÉ !");
+            LoggerSingleton.getInstance().log("DECORATOR",
+                    "ImmuniteDecorator appliqué à: " + joueurOriginal.getNom());
         }
 
-        // Remplacer dans la liste
-        joueurs.set(index, decorateur);
+        // Remplacer le joueur dans la liste
+        joueurs.set(index, joueurAvecPouvoir);
+
+        // Afficher les pouvoirs pour débogage
+        afficherPouvoirsSpeciaux();
+    }
+
+    // Méthode pour afficher les pouvoirs spéciaux (à ajouter)
+    public void afficherPouvoirsSpeciaux() {
+        System.out.println("\n=== POUVOIRS SPÉCIAUX ACTIFS ===");
+        boolean aucunPouvoir = true;
+
+        for (Joueur joueur : joueurs) {
+            if (joueur instanceof DoubleVoteDecorator) {
+                System.out.println("🎯 " + joueur.getNom() + " - DOUBLE VOTE");
+                aucunPouvoir = false;
+            } else if (joueur instanceof ImmuniteDecorator) {
+                System.out.println("🛡️ " + joueur.getNom() + " - IMMUNITÉ");
+                aucunPouvoir = false;
+            }
+        }
+
+        if (aucunPouvoir) {
+            System.out.println("Aucun pouvoir spécial actif");
+        }
+        System.out.println("================================\n");
     }
 
 

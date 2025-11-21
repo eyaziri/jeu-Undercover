@@ -42,16 +42,22 @@ public class Vote {
         Scanner sc = new Scanner(System.in);
         Joueur joueurTrouve = null;
 
-        while (joueurTrouve == null) { // Boucle jusqu'à ce qu'un joueur valide soit trouvé
+        while (joueurTrouve == null) {
             String nom = sc.nextLine();
             LoggerSingleton.getInstance().log("STATE", "Saisie utilisateur: " + nom);
 
             joueurTrouve = trouverJoueurParNom(nom);
 
             if (joueurTrouve != null) {
+                // 🔥 IMPORTANT: Utiliser la méthode voter() qui peut être décorée
                 joueur.voter(joueurTrouve);
                 System.out.println("Le joueur " + joueurTrouve.getNom() + " a reçu un vote.");
                 LoggerSingleton.getInstance().log("STATE", "Vote ajouté pour: " + joueurTrouve.getNom());
+
+                // Log du type de joueur qui vote
+                LoggerSingleton.getInstance().log("DECORATOR",
+                        "Vote effectué par: " + joueur.getClass().getSimpleName() +
+                                " - " + joueur.getNom());
             } else {
                 System.out.println("Joueur non trouvé. Veuillez saisir un nom valide : ");
                 LoggerSingleton.getInstance().log("STATE", "Joueur non trouvé: " + nom);

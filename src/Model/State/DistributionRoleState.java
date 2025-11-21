@@ -92,6 +92,19 @@ public class DistributionRoleState implements GameState {
         // 🎁 Donner UN SEUL super pouvoir
         partie.gestionJoueur.donnerDecorateurUnique();
 
+        // Dans la méthode executerEtat, après donnerDecorateurUnique()
+        partie.gestionJoueur.donnerDecorateurUnique();
+   System.out.println("\n=== VÉRIFICATION DES POUVOIRS ===");
+        for (Joueur j : partie.gestionJoueur.getListeJoueurs()) {
+            if (j instanceof DoubleVoteDecorator) {
+                System.out.println("✓ " + j.getNom() + " a le Double Vote");
+            } else if (j instanceof ImmuniteDecorator) {
+                System.out.println("✓ " + j.getNom() + " a l'Immunité");
+            }
+        }
+        System.out.println("================================\n");
+
+        partie.changerEtat(new DiscussionState());
         partie.changerEtat(new DiscussionState());
     }
 

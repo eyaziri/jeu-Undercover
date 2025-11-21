@@ -1,6 +1,15 @@
 package Model.GestionJoueur;
 
 import Logging.LoggerSingleton;
+import Model.Administration.GestionJoueur;
+import Model.Forum.HistoriqueMessage;
+import Model.Forum.Message;
+import Model.Vote.Elimination;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  * Classe abstraite de décorateur pour Joueur
@@ -11,31 +20,103 @@ public abstract non-sealed class JoueurDecorator extends Joueur {
 
     public JoueurDecorator(Joueur joueur) {
         this.joueur = joueur;
-        LoggerSingleton.getInstance().log("STATE", "Création de JoueurDecorator pour: " + joueur.getNom());
+        LoggerSingleton.getInstance().log("DECORATOR", "Création de " + this.getClass().getSimpleName() + " pour: " + joueur.getNom());
     }
 
+    // Délégation de toutes les méthodes à joueur
     @Override
     public String getNom() {
-        LoggerSingleton.getInstance().log("STATE", "getNom() appelé sur Decorator: " + joueur.getNom());
         return joueur.getNom();
     }
 
     @Override
-    public String getRole() {
-        LoggerSingleton.getInstance().log("STATE", "getRole() appelé sur Decorator: " + joueur.getRole());
-        return joueur.getRole();
+    public int getIdJoueur() {
+        return joueur.getIdJoueur();
     }
 
     @Override
-    public String getMot() {
-        LoggerSingleton.getInstance().log("STATE", "getMot() appelé sur Decorator: " + joueur.getMot());
-        return joueur.getMot();
+    public void setEstVivant() {
+        joueur.setEstVivant();
+    }
+
+    @Override
+    public boolean getEstVivant() {
+        return joueur.getEstVivant();
+    }
+
+    @Override
+    public void setNom(String nom) {
+        joueur.setNom(nom);
+    }
+
+    @Override
+    public void setScore(int n) {
+        joueur.setScore(n);
     }
 
     @Override
     public int getScore() {
-        LoggerSingleton.getInstance().log("STATE", "getScore() appelé sur Decorator: " + joueur.getScore());
         return joueur.getScore();
+    }
+
+    @Override
+    public void setMot(String mot) {
+        joueur.setMot(mot);
+    }
+
+    @Override
+    public String getMot() {
+        return joueur.getMot();
+    }
+
+    @Override
+    public void setRole(String nomRole) {
+        joueur.setRole(nomRole);
+    }
+
+    @Override
+    public String getRole() {
+        return joueur.getRole();
+    }
+
+    @Override
+    public int getNombreDeVotesRecus() {
+        return joueur.getNombreDeVotesRecus();
+    }
+
+    @Override
+    public void setnombreDeVotesRecus() {
+        joueur.setnombreDeVotesRecus();
+    }
+
+    @Override
+    public void setAVote(boolean aVote) {
+        joueur.setAVote(aVote);
+    }
+
+    @Override
+    public boolean isAVote() {
+        return joueur.isAVote();
+    }
+
+    @Override
+    public Message EcrireMessage(HistoriqueMessage historiqueMessage) {
+        return joueur.EcrireMessage(historiqueMessage);
+    }
+
+    @Override
+    public Message EcrireMessages(HistoriqueMessage historiqueMessage, String contenu) {
+        return joueur.EcrireMessages(historiqueMessage, contenu);
+    }
+
+    @Override
+    public void estEliminer(GestionJoueur gestionJoueur) {
+        joueur.estEliminer(gestionJoueur);
+    }
+
+    @Override
+    public String toString() {
+        return joueur.toString();
     }
 
     @Override
@@ -43,5 +124,8 @@ public abstract non-sealed class JoueurDecorator extends Joueur {
         joueur.voter(cible);
     }
 
-    // Tu peux déléguer d'autres méthodes de Joueur ici et ajouter des logs similaires
+    @Override
+    public boolean isVivant() {
+        return joueur.isVivant();
+    }
 }

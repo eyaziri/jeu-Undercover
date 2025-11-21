@@ -1,6 +1,7 @@
 package Model.Vote;
 
 import Logging.LoggerSingleton;
+import Model.GestionJoueur.ImmuniteDecorator;
 import Model.GestionJoueur.Joueur;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,19 +61,30 @@ public record Elimination(List<Joueur> joueursElimines) {
     }
 
     public boolean eliminer(Joueur joueur) {
-        // Vérifie si le joueur peut être éliminé (immunité)
-        joueur.setEstVivant(); // laisse ImmuniteDecorator décider
-
-        if (!joueur.isVivant()) {
-            // le joueur n'a PAS d'immunité
-            joueursElimines.add(joueur);
-            LoggerSingleton.getInstance().log("STATE", "Joueur éliminé: " + joueur.getNom());
-            return true;
-        } else {
-            // immunité activée
-            LoggerSingleton.getInstance().log("STATE", "Élimination annulée (Immunité): " + joueur.getNom());
+        // Vérifier si le joueur a l'immunité
+        if (joueur instanceof ImmuniteDecorator) {
+            System.out.println("🛡️ " + joueur.getNom() + " est immunisé et ne peut pas être éliminé !");
+            LoggerSingleton.getInstance().log("DECORATOR",
+                    "Élimination annulée - Immunité activée pour: " + joueur.getNom());
             return false;
         }
+
+        // Pour les autres joueurs, procéder à l'élimination normale
+        try {
+            joueur.setEstVivant();
+
+            if (!joueur.isVivant()) {
+                joueursElimines.add(joueur);
+                System.out.println("❌ " + joueur.getNom() + " a été éliminé !");
+                LoggerSingleton.getInstance().log("STATE", "Joueur éliminé: " + joueur.getNom());
+                return true;
+            }
+        } catch (Exception e) {
+            LoggerSingleton.getInstance().log("ERROR",
+                    "Erreur lors de l'élimination de " + joueur.getNom() + ": " + e.getMessage());
+        }
+
+        return false;
     }
 
 }
