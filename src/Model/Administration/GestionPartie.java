@@ -12,8 +12,8 @@ import Model.Vote.Elimination;
 public class GestionPartie {
 
     private GameState etatCourant;
-    
-    // toutes tes données utiles
+
+    // Toutes les données nécessaires à la partie
     public Admin admin = new Admin();
     public GestionJoueur gestionJoueur = new GestionJoueur();
     public Elimination elimination = new Elimination();
@@ -26,6 +26,7 @@ public class GestionPartie {
 
     public GestionPartie() {
         this.etatCourant = new MenuState(); // état initial
+        LoggerSingleton.getInstance().log("STATE", "Partie initialisée avec l'état MenuState");
     }
 
     public void changerEtat(GameState nouvelEtat) {
@@ -34,8 +35,8 @@ public class GestionPartie {
         }
 
         LoggerSingleton.getInstance().log(
-            "STATE",
-            etatCourant.getClass().getSimpleName() + " -> " + nouvelEtat.getClass().getSimpleName()
+                "STATE",
+                "Transition : " + etatCourant.getClass().getSimpleName() + " -> " + nouvelEtat.getClass().getSimpleName()
         );
 
         etatCourant = nouvelEtat;
@@ -43,6 +44,7 @@ public class GestionPartie {
     }
 
     public void demarrer() {
+        LoggerSingleton.getInstance().log("STATE", "Démarrage de la partie");
         etatCourant.entrerEtat(this);
         etatCourant.executerEtat(this);
     }

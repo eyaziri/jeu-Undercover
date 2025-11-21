@@ -1,45 +1,63 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Administration;
 
+import Logging.LoggerSingleton;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.List;
 import java.util.Random;
 
+/**
+ * Classe représentant un rôle pour les joueurs
+ */
 public class Role {
-    ArrayList<String> roles;
+
+    private final List<String> roles;
     private String nomRole;
-    
+
     public Role() {
         roles = new ArrayList<>();
         roles.add("Civile");
         roles.add("Undercover");
         roles.add("MrWhite");
     }
-    
+
+    /**
+     * Définit le rôle d’un joueur
+     * @param roleName nom du rôle à assigner
+     */
     public void setNomRole(String roleName) {
-        if (roles.contains(roleName)) {
+        if (roleName != null && roles.contains(roleName)) {
             this.nomRole = roleName;
         } else {
-            this.nomRole = donnerRoleAleatoire(); 
+            this.nomRole = donnerRoleAleatoire();
+            LoggerSingleton.getInstance().log("ROLE", "Rôle invalide fourni, rôle aléatoire assigné : " + this.nomRole);
         }
     }
-    
-    public String getNomRole() 
-    {
+
+    public String getNomRole() {
         return nomRole;
     }
-    
-    public String donnerRoleAleatoire() 
-    {
+
+    /**
+     * Donne un rôle aléatoire parmi la liste des rôles disponibles
+     */
+    public String donnerRoleAleatoire() {
         Random rand = new Random();
-        return roles.get(rand.nextInt(roles.size()));
+        String roleAleatoire = roles.get(rand.nextInt(roles.size()));
+        LoggerSingleton.getInstance().log("ROLE", "Rôle aléatoire généré : " + roleAleatoire);
+        return roleAleatoire;
     }
-    
+
+    /**
+     * Ajoute un rôle supplémentaire à la liste
+     */
     public void addRole(String role) {
-        roles.add(role);
+        if (role != null && !roles.contains(role)) {
+            roles.add(role);
+            LoggerSingleton.getInstance().log("ROLE", "Nouveau rôle ajouté : " + role);
+        }
     }
-    
+
+    public List<String> getRolesDisponibles() {
+        return new ArrayList<>(roles);
+    }
 }

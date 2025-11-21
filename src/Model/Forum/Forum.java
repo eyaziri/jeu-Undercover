@@ -1,27 +1,37 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Forum;
 
+import Logging.LoggerSingleton;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- *
- * @author user
+ * Classe représentant le forum contenant plusieurs discussions
  */
 public class Forum {
-    private  List<Discussion> discussions;
+
+    private final List<Discussion> discussions;
 
     public Forum() {
         this.discussions = new ArrayList<>();
     }
 
+    /**
+     * Crée une nouvelle discussion et l'ajoute au forum
+     */
     public void creerDiscussion(Discussion discussion) {
-        discussions.add(discussion);
+        if (discussion != null) {
+            discussions.add(discussion);
+            LoggerSingleton.getInstance().log("FORUM", "Nouvelle discussion créée dans le forum.");
+            System.out.println("Discussion ajoutée au forum.");
+        } else {
+            System.out.println("Impossible d'ajouter une discussion null.");
+        }
     }
 
+    /**
+     * Retourne la liste des discussions du forum
+     */
     public List<Discussion> listerDiscussions() {
-        return discussions;
+        return new ArrayList<>(discussions);
     }
 }

@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Vote;
 
-
-
+import Logging.LoggerSingleton;
 import Model.GestionJoueur.Joueur;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +10,17 @@ public record Elimination(List<Joueur> joueursElimines) {
     // Constructeur par défaut qui initialise la liste des joueurs éliminés
     public Elimination() {
         this(new ArrayList<>());
+        LoggerSingleton.getInstance().log("STATE", "Elimination initialisée");
     }
+
     public Joueur obtenirDernierJoueurElimine() {
         if (!joueursElimines.isEmpty()) {
-            return joueursElimines.get(joueursElimines.size() - 1);
+            Joueur dernier = joueursElimines.get(joueursElimines.size() - 1);
+            LoggerSingleton.getInstance().log("STATE", "Dernier joueur éliminé: " + dernier.getNom());
+            return dernier;
         }
-        return null; 
+        LoggerSingleton.getInstance().log("STATE", "Aucun joueur éliminé pour obtenirDernierJoueurElimine");
+        return null;
     }
 
     public ArrayList<Joueur> getJoueursElimines() {
@@ -30,25 +30,32 @@ public record Elimination(List<Joueur> joueursElimines) {
     public void ajouterJoueurElimine(Joueur joueur) {
         if (joueur != null) {
             joueursElimines.add(joueur);
+            LoggerSingleton.getInstance().log("STATE", "Joueur ajouté aux éliminés: " + joueur.getNom());
         } else {
             System.out.println("Impossible d'ajouter un joueur null.");
+            LoggerSingleton.getInstance().log("STATE", "Tentative d'ajout d'un joueur null aux éliminés");
         }
     }
-    public void supprimerJoueur(Joueur joueur) 
-        {
-            joueursElimines.remove(joueur);
+
+    public void supprimerJoueur(Joueur joueur) {
+        if (joueursElimines.remove(joueur)) {
+            LoggerSingleton.getInstance().log("STATE", "Joueur supprimé des éliminés: " + joueur.getNom());
+        } else {
+            LoggerSingleton.getInstance().log("STATE", "Tentative de suppression échouée: joueur non trouvé");
         }
+    }
 
     public void AffichageListeJoueursElimine(ArrayList<Joueur> joueursElimines) {
         if (joueursElimines.isEmpty()) {
             System.out.println("");
+            LoggerSingleton.getInstance().log("STATE", "Aucun joueur à afficher parmi les éliminés");
             return;
         }
 
         System.out.println("Liste des joueurs éliminés :");
         for (Joueur joueur : joueursElimines) {
-            System.out.println( joueur.getNom());
+            System.out.println(joueur.getNom());
+            LoggerSingleton.getInstance().log("STATE", "Joueur éliminé affiché: " + joueur.getNom());
         }
     }
 }
-

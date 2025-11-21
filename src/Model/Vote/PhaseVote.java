@@ -1,5 +1,6 @@
 package Model.Vote;
 
+import Logging.LoggerSingleton;
 import Model.Administration.GestionJoueur;
 import Model.Forum.Discussion;
 import Model.Forum.Forum;
@@ -22,26 +23,29 @@ public class PhaseVote {
                              Elimination elimination,
                              Gagnant gagnant) {
 
+        LoggerSingleton.getInstance().log("STATE", "PhaseVote démarrée");
+
         GestionVotes gestionVote = new GestionVotes();
 
-        // Boucle des tours de vote
         while (!phaseTerminee) {
 
             System.out.println("\n\n---------------- SESSION DE VOTE ----------------\n");
+            LoggerSingleton.getInstance().log("STATE", "Nouvelle session de vote");
 
             // Nouvelle discussion
             Discussion discussion = new Discussion();
             forum.creerDiscussion(discussion);
+            LoggerSingleton.getInstance().log("STATE", "Nouvelle discussion créée");
 
-            // Ajout des observateurs au sujet (Discussion)
-            discussion.addObserver(historiqueMessage);  // Observer : HistoriqueMessage
-            // Tu peux ajouter ScoreObservateur ici si tu veux :
-            // discussion.addObserver(new ScoreObservateur());
+            // Ajout des observateurs
+            discussion.addObserver(historiqueMessage);
+            LoggerSingleton.getInstance().log("STATE", "HistoriqueMessage ajouté comme observateur");
 
             // 🔥 PHASE DISCUSSION
             for (Joueur joueur : gestionJoueur.getListeJoueurs()) {
-                Message msg = joueur.EcrireMessage(historiqueMessage); // Le joueur décrit son mot
-                discussion.ajouterMessage(msg); // Notifie TOUTES les observers
+                Message msg = joueur.EcrireMessage(historiqueMessage);
+                discussion.ajouterMessage(msg);
+                LoggerSingleton.getInstance().log("STATE", "Message écrit par: " + joueur.getNom());
             }
 
             System.out.println("\nMessages échangés :\n");
@@ -49,33 +53,35 @@ public class PhaseVote {
 
             // 🔥 PHASE DE VOTE
             for (Joueur joueur : gestionJoueur.getListeJoueurs()) {
-                Vote vote = new Vote();
-                vote.ajouterVote(joueur);  // Le joueur vote
+                LoggerSingleton.getInstance().log("STATE", "Début du vote pour: " + joueur.getNom());
 
-                gestionVote.ajouterVote(joueur); // Comptabilise le vote
+                Vote vote = new Vote();
+                vote.ajouterVote(joueur);
+                LoggerSingleton.getInstance().log("STATE", "Vote réalisé par: " + joueur.getNom());
+
+                gestionVote.ajouterVote(joueur);
+                LoggerSingleton.getInstance().log("STATE", "Vote comptabilisé pour: " + joueur.getNom());
             }
 
             System.out.println("\n-------------- VOTE TERMINÉ --------------\n");
+            LoggerSingleton.getInstance().log("STATE", "Vote terminé, élimination en cours");
 
             gestionVote.eliminerJoueurApresVote(gestionJoueur, elimination, this, gagnant);
+            LoggerSingleton.getInstance().log("STATE", "Élimination effectuée");
 
             System.out.println("\n\nJoueurs restants :\n");
             gestionJoueur.AffichageListeJoueurs();
 
             ArrayList<Joueur> joueursElimines = elimination.getJoueursElimines();
-
             System.out.println("\nJoueurs éliminés :\n");
             elimination.AffichageListeJoueursElimine(joueursElimines);
 
             // 🔥 PHASE DE VÉRIFICATION DES CONDITIONS DE VICTOIRE
+            LoggerSingleton.getInstance().log("STATE", "Vérification des conditions de victoire");
             verifierConditionsVictoire(gestionJoueur, elimination, score, gagnant);
         }
     }
 
-
-    /**
-     * Vérifie toutes les conditions de victoire
-     */
     private void verifierConditionsVictoire(GestionJoueur gestionJoueur,
                                             Elimination elimination,
                                             Score score,
@@ -93,9 +99,9 @@ public class PhaseVote {
             }
         }
 
-        // Condition Civils gagnent
         if (whites == 0 && civils >= undercovers) {
             System.out.println("\n🏆 Les Civils ont gagné !\n");
+            LoggerSingleton.getInstance().log("STATE", "Victoire Civils");
             gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
             score.attribuerScore(gagnant.getNom(),
                     gestionJoueur.getListeJoueurs(),
@@ -104,9 +110,9 @@ public class PhaseVote {
             return;
         }
 
-        // Condition Undercover gagnent
         if (whites == 0 && civils < undercovers) {
             System.out.println("\n🏆 Les Undercover ont gagné !\n");
+            LoggerSingleton.getInstance().log("STATE", "Victoire Undercover");
             gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
             score.attribuerScore(gagnant.getNom(),
                     gestionJoueur.getListeJoueurs(),
@@ -115,9 +121,9 @@ public class PhaseVote {
             return;
         }
 
-        // Condition Mr.White gagne
         if (whites >= 1 && civils == 0 && undercovers == 0) {
             System.out.println("\n🏆 Mr.White a gagné !\n");
+            LoggerSingleton.getInstance().log("STATE", "Victoire Mr.White");
             gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
             score.attribuerScore(gagnant.getNom(),
                     gestionJoueur.getListeJoueurs(),
@@ -126,14 +132,14 @@ public class PhaseVote {
             return;
         }
 
-        // Sinon : la partie continue
         System.out.println("\n⚠ Le jeu continue : Mr.White est encore en jeu.\n");
+        LoggerSingleton.getInstance().log("STATE", "Jeu continue : Mr.White en jeu");
     }
-
 
     public void terminerPhase() {
         this.phaseTerminee = true;
         System.out.println("\n\n---------------- PHASE DE VOTE TERMINÉE ----------------\n");
+        LoggerSingleton.getInstance().log("STATE", "PhaseVote terminée");
     }
 
     public boolean estPhaseTermine() {
