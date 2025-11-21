@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Vote;
 
 import Model.Administration.GestionJoueur;
@@ -12,110 +8,135 @@ import Model.Forum.Message;
 import Model.GestionJoueur.Gagnant;
 import Model.GestionJoueur.Joueur;
 import Model.GestionJoueur.Score;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 
-
-
-
-/**
- *
- * @author eyazi
- */
 public class PhaseVote {
-    
-    boolean phaseTermine;
-    
- 
-    public void demarrerVote(GestionJoueur gestionJoueur,Forum forum,HistoriqueMessage historiqueMessage,Score score,Elimination elimination ,Gagnant gagnant)
-{
-    GestionVotes gestionVote = new GestionVotes();
-    while (!estPhaseTermine()) {System.out.println("\n\n ------------------------------  La session de vote commence   ----------------------\n\n");
-        Discussion discussion =new Discussion();
-        forum.creerDiscussion(discussion);
-                    
-         for (int i = 0; i < gestionJoueur.longueurListe(); i++)
-        {
-        Joueur joueur = gestionJoueur.getListeJoueurs().get(i);  
-        Message msg = new Message(" ", joueur);
-        msg = joueur.EcrireMessage(historiqueMessage);
-        discussion.ajouterMessage(msg);
+
+    private boolean phaseTerminee = false;
+
+    public void demarrerVote(GestionJoueur gestionJoueur,
+                             Forum forum,
+                             HistoriqueMessage historiqueMessage,
+                             Score score,
+                             Elimination elimination,
+                             Gagnant gagnant) {
+
+        GestionVotes gestionVote = new GestionVotes();
+
+        // Boucle des tours de vote
+        while (!phaseTerminee) {
+
+            System.out.println("\n\n---------------- SESSION DE VOTE ----------------\n");
+
+            // Nouvelle discussion
+            Discussion discussion = new Discussion();
+            forum.creerDiscussion(discussion);
+
+            // Ajout des observateurs au sujet (Discussion)
+            discussion.addObserver(historiqueMessage);  // Observer : HistoriqueMessage
+            // Tu peux ajouter ScoreObservateur ici si tu veux :
+            // discussion.addObserver(new ScoreObservateur());
+
+            // 🔥 PHASE DISCUSSION
+            for (Joueur joueur : gestionJoueur.getListeJoueurs()) {
+                Message msg = joueur.EcrireMessage(historiqueMessage); // Le joueur décrit son mot
+                discussion.ajouterMessage(msg); // Notifie TOUTES les observers
+            }
+
+            System.out.println("\nMessages échangés :\n");
+            discussion.afficherMessages();
+
+            // 🔥 PHASE DE VOTE
+            for (Joueur joueur : gestionJoueur.getListeJoueurs()) {
+                Vote vote = new Vote();
+                vote.ajouterVote(joueur);  // Le joueur vote
+
+                gestionVote.ajouterVote(joueur); // Comptabilise le vote
+            }
+
+            System.out.println("\n-------------- VOTE TERMINÉ --------------\n");
+
+            gestionVote.eliminerJoueurApresVote(gestionJoueur, elimination, this, gagnant);
+
+            System.out.println("\n\nJoueurs restants :\n");
+            gestionJoueur.AffichageListeJoueurs();
+
+            ArrayList<Joueur> joueursElimines = elimination.getJoueursElimines();
+
+            System.out.println("\nJoueurs éliminés :\n");
+            elimination.AffichageListeJoueursElimine(joueursElimines);
+
+            // 🔥 PHASE DE VÉRIFICATION DES CONDITIONS DE VICTOIRE
+            verifierConditionsVictoire(gestionJoueur, elimination, score, gagnant);
         }
+    }
 
-        discussion.afficherMessages();
-        for (int i = 0; i < gestionJoueur.longueurListe(); i++) {
-            Joueur joueur = gestionJoueur.getListeJoueurs().get(i);
-            Vote vote = new Vote();
-            vote.ajouterVote(joueur);  
-            gestionVote.ajouterVote(joueur); 
 
-        }
+    /**
+     * Vérifie toutes les conditions de victoire
+     */
+    private void verifierConditionsVictoire(GestionJoueur gestionJoueur,
+                                            Elimination elimination,
+                                            Score score,
+                                            Gagnant gagnant) {
 
-        System.out.println("\n -------------------  La session de vote est terminee  --------------");
-
-        gestionVote.eliminerJoueurApresVote(gestionJoueur,elimination,this,gagnant);
-        System.out.println("\n\n La liste des Joueurs restants \n\n");
-        gestionJoueur.AffichageListeJoueurs();
-        
-        ArrayList<Joueur> joueursElimines=elimination.getJoueursElimines();
-        elimination.AffichageListeJoueursElimine(joueursElimines);
-
-        int nombreDeJoueurRestantCivil = 0;
-        int nombreDeJoueurRestantUndercover = 0;
-        int nombreDeJoueurRestantMrWhite = 0;
+        int civils = 0;
+        int undercovers = 0;
+        int whites = 0;
 
         for (Joueur joueur : gestionJoueur.getListeJoueurs()) {
-            if (joueur.getRole().equalsIgnoreCase("Civile")) {
-                nombreDeJoueurRestantCivil++;
-            } else if (joueur.getRole().equalsIgnoreCase("Undercover")) {
-                nombreDeJoueurRestantUndercover++;
-            } else if (joueur.getRole().equalsIgnoreCase("MrWhite")) {
-                nombreDeJoueurRestantMrWhite++;
+            switch (joueur.getRole()) {
+                case "Civile" -> civils++;
+                case "Undercover" -> undercovers++;
+                case "MrWhite" -> whites++;
             }
         }
 
-        if (nombreDeJoueurRestantMrWhite == 0) {
-            if (nombreDeJoueurRestantCivil >= nombreDeJoueurRestantUndercover) {
-                System.out.println("Les Civils ont gagne !");
-                gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
-                score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
-                this.terminerPhase();
-                
-            } else if (nombreDeJoueurRestantCivil < nombreDeJoueurRestantUndercover) {
-                System.out.println("Les Undercover ont gagne !");
-                gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
-                score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
-                this.terminerPhase();
-                
-                
-            }
-        } 
-        else if ((nombreDeJoueurRestantMrWhite >= 1&&nombreDeJoueurRestantCivil==0&&nombreDeJoueurRestantUndercover==0) || (nombreDeJoueurRestantMrWhite >= 1&&nombreDeJoueurRestantCivil==1 &&nombreDeJoueurRestantUndercover==0) || (nombreDeJoueurRestantMrWhite >= 1&&nombreDeJoueurRestantCivil==0 &&nombreDeJoueurRestantUndercover==1) )
-        {
-            System.out.println("Les MrWhite ont gagne !");
+        // Condition Civils gagnent
+        if (whites == 0 && civils >= undercovers) {
+            System.out.println("\n🏆 Les Civils ont gagné !\n");
             gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
-            score.attribuerScore(gagnant.getNom(), gestionJoueur.getListeJoueurs(), elimination.getJoueursElimines());
-            this.terminerPhase();
+            score.attribuerScore(gagnant.getNom(),
+                    gestionJoueur.getListeJoueurs(),
+                    elimination.getJoueursElimines());
+            terminerPhase();
+            return;
         }
-        else if ((nombreDeJoueurRestantMrWhite >= 1)&&(this.phaseTermine!=true))
-        {
-            System.out.println("Le jeu continue, car Mr. White est encore en jeu.");
+
+        // Condition Undercover gagnent
+        if (whites == 0 && civils < undercovers) {
+            System.out.println("\n🏆 Les Undercover ont gagné !\n");
+            gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+            score.attribuerScore(gagnant.getNom(),
+                    gestionJoueur.getListeJoueurs(),
+                    elimination.getJoueursElimines());
+            terminerPhase();
+            return;
         }
-        
+
+        // Condition Mr.White gagne
+        if (whites >= 1 && civils == 0 && undercovers == 0) {
+            System.out.println("\n🏆 Mr.White a gagné !\n");
+            gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+            score.attribuerScore(gagnant.getNom(),
+                    gestionJoueur.getListeJoueurs(),
+                    elimination.getJoueursElimines());
+            terminerPhase();
+            return;
+        }
+
+        // Sinon : la partie continue
+        System.out.println("\n⚠ Le jeu continue : Mr.White est encore en jeu.\n");
     }
-}
 
-        public void terminerPhase() 
-        {
-            this.phaseTermine = true;
-            System.out.println(" \n\n -------------------  La phase de vote est terminee  --------------\n\n ");
-            System.out.println(" \n\n -------------------  Merci de Participer a Notre Jeu !  --------------\n\n ");
-            
-        }
 
-        public boolean estPhaseTermine() 
-        {
-            return phaseTermine;
-        }
-  
+    public void terminerPhase() {
+        this.phaseTerminee = true;
+        System.out.println("\n\n---------------- PHASE DE VOTE TERMINÉE ----------------\n");
+    }
+
+    public boolean estPhaseTermine() {
+        return phaseTerminee;
+    }
 }

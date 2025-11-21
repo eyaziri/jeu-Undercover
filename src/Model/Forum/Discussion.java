@@ -1,52 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Forum;
 
 import java.util.ArrayList;
 import java.util.List;
-/**
- *
- * @author user
- */
-public record Discussion(List<Message> messages) {
 
-    // Constructeur par défaut pour initialiser la liste de messages
-    public Discussion() {
-        this(new ArrayList<>());
+public class Discussion implements Sujet {
+
+    private List<Message> messages = new ArrayList<>();
+    private List<Observateur> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observateur o) {
+        observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observateur o) {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObservers(Message message) {
+        for (Observateur obs : observers) {
+            obs.update(message);
+        }
     }
 
     public void ajouterMessage(Message message) {
         messages.add(message);
+        notifyObservers(message); // 🔥 Notifie tout le monde
     }
 
-    public List<Message> getMessages() {
-        return new ArrayList<>(messages); 
+    public void afficherMessages() {
+    for (Message msg : messages) {
+        System.out.println(msg); // ou msg.getTexte() si Message a un getter
     }
-    
-    public void afficherMessages() 
-    {
-    if (messages.isEmpty()) {
-        System.out.println("Aucun message dans la discussion.");
-    } else {
-        for (Message message : messages) {
-            message.afficherMessage();  
-        }
-    }
-    
-    }
-    
-    public String AfficherMessages() {
-    if (messages.isEmpty()) {
-        return "Aucun message dans la discussion.";
-    } else {
-        StringBuilder message = new StringBuilder();
-        for (Message msg : messages) {
-            message.append(msg.toString()).append("\n"); 
-        }
-        return message.toString();
-    }
-    }
-    
+}
+
 }

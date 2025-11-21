@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  */
 
 import java.util.Scanner;
-  public abstract sealed class Joueur permits Undercover, MrWhite, Civil,Gagnant{
+  public abstract sealed class Joueur permits Undercover, MrWhite, Civil,Gagnant, JoueurDecorator{
             protected static int compteurId = 0;
             protected int idJoueur;
             protected String nom;
