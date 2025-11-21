@@ -14,14 +14,30 @@ public class VoteState implements GameState {
 
     @Override
     public void executerEtat(GestionPartie partie) {
+
         LoggerSingleton.getInstance().log("STATE", "Exécution de l'état VoteState");
 
         PhaseVote pv = new PhaseVote();
-        pv.demarrerVote(partie.gestionJoueur, partie.forum, partie.historique,
-                partie.score, partie.elimination, partie.gagnant);
 
-        LoggerSingleton.getInstance().log("STATE", "Fin de PhaseVote, changement vers GameOverState");
-        partie.changerEtat(new GameOverState());
+        pv.demarrerVote(
+                partie.gestionJoueur,
+                partie.forum,
+                partie.historique,
+                partie.score,
+                partie.elimination,
+                partie.gagnant
+        );
+
+        // SI LA PHASE DE VOTE EST TERMINÉE → GameOverState
+        if (pv.estPhaseTermine()) {
+            LoggerSingleton.getInstance().log("STATE", "Phase de vote terminée -> GameOverState");
+            partie.changerEtat(new GameOverState());
+        }
+        // SINON → un nouveau tour de vote
+        else {
+            LoggerSingleton.getInstance().log("STATE", "Phase de vote continue -> nouveau VoteState");
+            partie.changerEtat(new VoteState());
+        }
     }
 
     @Override

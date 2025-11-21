@@ -47,10 +47,8 @@ public class DistributionRoleState implements GameState {
                         liste.associerMotDeCivilEtDeUndercover(joueur);
                         motCivil = joueur.getMot();
                         motUnder = liste.getMotUndercover(motCivil);
-                        LoggerSingleton.getInstance().log("STATE", "Mot civil et undercover associés: " + motCivil + " / " + motUnder);
                     } else {
                         joueur.setMot(motCivil);
-                        LoggerSingleton.getInstance().log("STATE", "Mot civil attribué: " + motCivil);
                     }
 
                     totalCivil++;
@@ -64,10 +62,8 @@ public class DistributionRoleState implements GameState {
                         liste.associerMotDeCivilEtDeUndercover(joueur);
                         motUnder = joueur.getMot();
                         motCivil = liste.getMotCivil(motUnder);
-                        LoggerSingleton.getInstance().log("STATE", "Mot undercover et civil associés: " + motUnder + " / " + motCivil);
                     } else {
                         joueur.setMot(motUnder);
-                        LoggerSingleton.getInstance().log("STATE", "Mot undercover attribué: " + motUnder);
                     }
 
                     totalUnder++;
@@ -77,28 +73,28 @@ public class DistributionRoleState implements GameState {
                     joueur = new MrWhite();
                     joueur.setRole("MrWhite");
                     joueur.setMot("Tu es Mr White !");
-                    LoggerSingleton.getInstance().log("STATE", "MrWhite créé avec mot spécial");
                     totalWhite++;
                 }
-                default -> {continue;}
+                default -> { continue; }
             }
 
             partie.gestionJoueur.ajouterJoueur(joueur);
-            LoggerSingleton.getInstance().log("STATE", "Joueur ajouté: " + joueur.getNom() + " (Rôle: " + joueur.getRole() + ")");
         }
 
-        // Déterminer le mot correct (civil)
+        // Déterminer mot correct
         for (Joueur j : partie.gestionJoueur.getListeJoueurs()) {
             if (j.getRole().equals("Civile")) {
                 partie.motCorrect = j.getMot();
-                LoggerSingleton.getInstance().log("STATE", "Mot correct déterminé: " + partie.motCorrect);
                 break;
             }
         }
 
-        LoggerSingleton.getInstance().log("STATE", "Fin DistributionRoleState -> Passage à DiscussionState");
+        // 🎁 Donner UN SEUL super pouvoir
+        partie.gestionJoueur.donnerDecorateurUnique();
+
         partie.changerEtat(new DiscussionState());
     }
+
 
     @Override
     public void sortirEtat(GestionPartie partie) {

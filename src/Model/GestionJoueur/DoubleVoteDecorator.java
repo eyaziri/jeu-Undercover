@@ -22,4 +22,12 @@ public class DoubleVoteDecorator extends JoueurDecorator {
         System.out.println(joueur.getNom() + " utilise un DOUBLE VOTE !");
         LoggerSingleton.getInstance().log("STATE", joueur.getNom() + " a utilisé Double Vote");
     }
+
+    @Override
+    public void voter(Joueur cible) {
+        System.out.println(joueur.getNom() + " utilise un DOUBLE VOTE !");
+        cible.setnombreDeVotesRecus();
+        cible.setnombreDeVotesRecus();
+    }
+
 }

@@ -14,8 +14,9 @@ public class ImmuniteDecorator extends JoueurDecorator {
 
     @Override
     public void setEstVivant() {
-        System.out.println(joueur.getNom() + " est immunisé : ne peut pas être éliminé !");
-        LoggerSingleton.getInstance().log("STATE", "Tentative d'élimination de " + joueur.getNom() + " bloquée par Immunité");
-        // ne change pas l'état
+        System.out.println(joueur.getNom() + " est immunisé et ne peut pas être éliminé !");
+        LoggerSingleton.getInstance().log("STATE",
+                "Élimination annulée grâce à l'immunité pour " + joueur.getNom());
     }
+
 }

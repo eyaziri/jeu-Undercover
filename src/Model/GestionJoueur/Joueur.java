@@ -124,4 +124,16 @@ public abstract sealed class Joueur permits Undercover, MrWhite, Civil, Gagnant,
     public String toString() {
         return "Le Joueur : " + this.getNom() + " , est de rôle : " + this.getRole();
     }
+
+    public void voter(Joueur cible) {
+        cible.setnombreDeVotesRecus();
+    }
+
+    public boolean isVivant() {
+        return estVivant;
+    }
+
+
+
+
 }

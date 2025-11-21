@@ -38,5 +38,10 @@ public abstract non-sealed class JoueurDecorator extends Joueur {
         return joueur.getScore();
     }
 
+    @Override
+    public void voter(Joueur cible) {
+        joueur.voter(cible);
+    }
+
     // Tu peux déléguer d'autres méthodes de Joueur ici et ajouter des logs similaires
 }

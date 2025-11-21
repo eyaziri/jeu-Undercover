@@ -58,4 +58,21 @@ public record Elimination(List<Joueur> joueursElimines) {
             LoggerSingleton.getInstance().log("STATE", "Joueur éliminé affiché: " + joueur.getNom());
         }
     }
+
+    public boolean eliminer(Joueur joueur) {
+        // Vérifie si le joueur peut être éliminé (immunité)
+        joueur.setEstVivant(); // laisse ImmuniteDecorator décider
+
+        if (!joueur.isVivant()) {
+            // le joueur n'a PAS d'immunité
+            joueursElimines.add(joueur);
+            LoggerSingleton.getInstance().log("STATE", "Joueur éliminé: " + joueur.getNom());
+            return true;
+        } else {
+            // immunité activée
+            LoggerSingleton.getInstance().log("STATE", "Élimination annulée (Immunité): " + joueur.getNom());
+            return false;
+        }
+    }
+
 }

@@ -49,7 +49,7 @@ public class Vote {
             joueurTrouve = trouverJoueurParNom(nom);
 
             if (joueurTrouve != null) {
-                joueurTrouve.setnombreDeVotesRecus();
+                joueur.voter(joueurTrouve);
                 System.out.println("Le joueur " + joueurTrouve.getNom() + " a reçu un vote.");
                 LoggerSingleton.getInstance().log("STATE", "Vote ajouté pour: " + joueurTrouve.getNom());
             } else {

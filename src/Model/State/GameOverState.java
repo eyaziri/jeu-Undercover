@@ -2,6 +2,7 @@ package Model.State;
 
 import Logging.LoggerSingleton;
 import Model.Administration.GestionPartie;
+
 import java.util.Scanner;
 
 public class GameOverState implements GameState {
@@ -21,18 +22,37 @@ public class GameOverState implements GameState {
     public void executerEtat(GestionPartie partie) {
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("1 - Retour au menu");
-        System.out.println("2 - Quitter");
+        int choix = -1;
 
-        int c = sc.nextInt();
-        LoggerSingleton.getInstance().log("STATE", "Choix utilisateur dans GameOverState: " + c);
+        while (choix != 1 && choix != 2) {
 
-        if (c == 1) {
-            LoggerSingleton.getInstance().log("STATE", "Retour au MenuState");
-            partie.changerEtat(new MenuState());
-        } else {
-            System.out.println("Merci d'avoir joué !");
-            LoggerSingleton.getInstance().log("STATE", "Fin du jeu");
+            System.out.println("1 - Retour au menu");
+            System.out.println("2 - Quitter");
+            System.out.print("Votre choix : ");
+
+            if (sc.hasNextInt()) {
+                choix = sc.nextInt();
+            } else {
+                System.out.println("❌ Entrée invalide. Veuillez taper 1 ou 2.");
+                sc.next(); // Clear la mauvaise entrée
+                continue;
+            }
+
+            LoggerSingleton.getInstance().log("STATE", "Choix utilisateur dans GameOverState: " + choix);
+
+            switch (choix) {
+                case 1 -> {
+                    LoggerSingleton.getInstance().log("STATE", "Retour au MenuState");
+                    partie.changerEtat(new MenuState());
+                    return;
+                }
+                case 2 -> {
+                    System.out.println("Merci d'avoir joué !");
+                    LoggerSingleton.getInstance().log("STATE", "Fin du jeu");
+                    return;
+                }
+                default -> System.out.println("❌ Choix invalide. Essayez encore.");
+            }
         }
     }
 
