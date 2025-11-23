@@ -41,6 +41,10 @@ public abstract non-sealed class JoueurDecorator extends Joueur {
     public boolean getEstVivant() {
         return joueur.getEstVivant();
     }
+    public boolean hasDoubleVote() {
+        return false;
+    }
+
 
     @Override
     public void setNom(String nom) {

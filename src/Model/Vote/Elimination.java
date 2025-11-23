@@ -61,30 +61,40 @@ public record Elimination(List<Joueur> joueursElimines) {
     }
 
     public boolean eliminer(Joueur joueur) {
-        // Vérifier si le joueur a l'immunité
-        if (joueur instanceof ImmuniteDecorator) {
-            System.out.println("🛡️ " + joueur.getNom() + " est immunisé et ne peut pas être éliminé !");
-            LoggerSingleton.getInstance().log("DECORATOR",
-                    "Élimination annulée - Immunité activée pour: " + joueur.getNom());
-            return false;
-        }
-
-        // Pour les autres joueurs, procéder à l'élimination normale
         try {
+            // Déléguer toujours l'action d'élimination au joueur (le décorateur gère l'immunité)
+            // ImmuniteDecorator.overridden setEstVivant() consomme l'immunité la première fois.
             joueur.setEstVivant();
 
+            // Après l'appel, si le joueur est effectivement mort, on l'ajoute
             if (!joueur.isVivant()) {
                 joueursElimines.add(joueur);
                 System.out.println("❌ " + joueur.getNom() + " a été éliminé !");
                 LoggerSingleton.getInstance().log("STATE", "Joueur éliminé: " + joueur.getNom());
                 return true;
+            } else {
+                // Si le joueur est toujours vivant, cela peut être dû à l'immunité consommée ou autre logique.
+                // Si le joueur est un ImmuniteDecorator et que l'immunité était active, on loggue ça.
+                if (joueur instanceof ImmuniteDecorator deco) {
+                    if (deco.isImmuniteActive()) {
+                        // Normalement on ne devrait pas arriver ici car setEstVivant() consomme l'immunité,
+                        // mais loggons l'état pour debugging.
+                        LoggerSingleton.getInstance().log("DECORATOR",
+                                "Tentative d'élimination bloquée par immunité pour: " + joueur.getNom());
+                        System.out.println("🛡️ " + joueur.getNom() + " est immunisé et ne peut pas être éliminé !");
+                    } else {
+                        LoggerSingleton.getInstance().log("DECORATOR",
+                                "Immunité déjà utilisée précédemment pour: " + joueur.getNom());
+                    }
+                }
             }
         } catch (Exception e) {
             LoggerSingleton.getInstance().log("ERROR",
                     "Erreur lors de l'élimination de " + joueur.getNom() + ": " + e.getMessage());
         }
-
         return false;
     }
+
+
 
 }

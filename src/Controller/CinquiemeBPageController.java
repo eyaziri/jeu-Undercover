@@ -35,7 +35,7 @@ public class CinquiemeBPageController implements Initializable {
     void Affichage(){
         
         texteDescription.setText(""); 
-        texteDescription.setText(CinquiemePageController.discussion.AfficherMessages());
+        texteDescription.setText(CinquiemePageController.discussion.afficherMessages());
     }
     
     @FXML

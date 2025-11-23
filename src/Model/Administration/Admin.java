@@ -8,10 +8,6 @@ package Model.Administration;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/**
- *
- * @author eyazi
- */
 public class Admin {
     private int nombreJoueur=0;
    

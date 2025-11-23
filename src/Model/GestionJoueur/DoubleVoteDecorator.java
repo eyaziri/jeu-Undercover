@@ -9,7 +9,8 @@ public class DoubleVoteDecorator extends JoueurDecorator {
 
     public DoubleVoteDecorator(Joueur joueur) {
         super(joueur);
-        LoggerSingleton.getInstance().log("DECORATOR", "Joueur " + joueur.getNom() + " décoré avec Double Vote");
+        LoggerSingleton.getInstance().log("DECORATOR",
+                "Joueur " + joueur.getNom() + " décoré avec DOUBLE VOTE");
     }
 
     @Override
@@ -34,5 +35,8 @@ public class DoubleVoteDecorator extends JoueurDecorator {
 
     public boolean isPouvoirUtilise() {
         return pouvoirUtilise;
+    }
+    public boolean hasDoubleVote() {
+        return !pouvoirUtilise;    // peut encore doubler son vote
     }
 }

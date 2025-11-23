@@ -4,6 +4,8 @@ import Logging.LoggerSingleton;
 import Model.Administration.GestionJoueur;
 import Model.GestionJoueur.Gagnant;
 import Model.GestionJoueur.Joueur;
+import Model.GestionJoueur.JoueurDecorator;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -20,14 +22,24 @@ public class GestionVotes {
     }
 
     public void ajouterVote(Joueur joueur) {
-        if (resultatVote.containsKey(joueur)) {
-            int votesActuels = resultatVote.get(joueur);
-            resultatVote.put(joueur, votesActuels + 1);
+
+        int ajout;
+
+        if (joueur instanceof JoueurDecorator decorator && decorator.hasDoubleVote()) {
+            ajout = 2;
+            LoggerSingleton.getInstance().log("DECORATOR",
+                    "Double vote appliqué pour " + joueur.getNom());
         } else {
-            resultatVote.put(joueur, 1);
+            ajout = 1;
         }
-        LoggerSingleton.getInstance().log("STATE", "Vote ajouté pour: " + joueur.getNom() + " (Total: " + getVotes(joueur) + ")");
+
+        resultatVote.put(joueur, resultatVote.getOrDefault(joueur, 0) + ajout);
+
+        LoggerSingleton.getInstance().log("STATE",
+                "Vote ajouté pour: " + joueur.getNom() +
+                        " (+" + ajout + " vote(s), Total: " + getVotes(joueur) + ")");
     }
+
 
     public int getVotes(Joueur joueur) {
         return resultatVote.getOrDefault(joueur, 0);
@@ -42,69 +54,71 @@ public class GestionVotes {
         }
     }
 
-    public void eliminerJoueurApresVote(GestionJoueur gestionJoueur, Elimination elimination, PhaseVote phaseVote, Gagnant gagnant) {
-        List<Joueur> joueurs = gestionJoueur.getListeJoueurs();
+    public void eliminerJoueurApresVote(GestionJoueur gestionJoueur, PhaseVote phaseVote, Gagnant gagnant) {
 
+        if (resultatVote.isEmpty()) {
+            System.out.println("Aucun vote enregistré.");
+            return;
+        }
+
+        // 1️⃣ Déterminer le joueur le plus voté via la HashMap
         Joueur joueurElimine = null;
-        String mot = null;
+        int maxVotes = -1;
 
-        for (Joueur joueur : joueurs) {
-            if (joueurElimine == null || joueur.getNombreDeVotesRecus() > joueurElimine.getNombreDeVotesRecus()) {
-                joueurElimine = joueur;
+        for (var entry : resultatVote.entrySet()) {
+            if (entry.getValue() > maxVotes) {
+                joueurElimine = entry.getKey();
+                maxVotes = entry.getValue();
             }
         }
 
-        if (joueurElimine != null) {
-            LoggerSingleton.getInstance().log("STATE", "Joueur sélectionné pour élimination: " + joueurElimine.getNom() + " (Votes: " + joueurElimine.getNombreDeVotesRecus() + ")");
+        LoggerSingleton.getInstance().log("STATE",
+                "Joueur choisi pour élimination : " + joueurElimine.getNom() + " (" + maxVotes + " votes)"
+        );
 
-            String role = joueurElimine.getRole().toLowerCase();
 
-            if (role.equals("civile") || role.equals("undercover")) {
-                System.out.println("Le joueur " + joueurElimine.getNom() + " est elimine avec " + joueurElimine.getNombreDeVotesRecus() + " votes. Role: " + joueurElimine.getRole());
-                LoggerSingleton.getInstance().log("STATE", "Élimination joueur: " + joueurElimine.getNom() + " Role: " + joueurElimine.getRole());
+        // 2️⃣ Cas normal : Civile ou Undercover
+        if (joueurElimine.getRole().equalsIgnoreCase("civile") ||
+                joueurElimine.getRole().equalsIgnoreCase("undercover")) {
 
-                joueurElimine.estEliminer(gestionJoueur);
-                joueurElimine.setEstVivant();
-                elimination.ajouterJoueurElimine(joueurElimine);
-                gestionJoueur.supprimerJoueur(joueurElimine);
+            System.out.println("Le joueur " + joueurElimine.getNom() + " est éliminé !");
+            elimination.eliminer(joueurElimine);
+            gestionJoueur.supprimerJoueur(joueurElimine);
+            return;
+        }
 
-            } else if (role.equals("mrwhite")) {
-                LoggerSingleton.getInstance().log("STATE", "Mr.White doit deviner le mot");
 
-                for (Joueur joueur : joueurs) {
-                    if (joueur.getRole().equalsIgnoreCase("civile")) {
-                        mot = joueur.getMot();
-                        break;
-                    }
-                }
+        // 3️⃣ Cas spécial : Mr White doit deviner
+        if (joueurElimine.getRole().equalsIgnoreCase("mrwhite")) {
 
-                Scanner sc = new Scanner(System.in);
-                System.out.println("Vous êtes Mr. White. Essayez de deviner le mot associé : ");
-                String motDevine = null;
+            System.out.println("Mr White doit deviner le mot !");
 
-                if (sc.hasNextLine()) {
-                    motDevine = sc.nextLine();
-                }
+            // Trouver le mot Civil
+            String mot = gestionJoueur.getListeJoueurs().stream()
+                    .filter(j -> j.getRole().equalsIgnoreCase("civile"))
+                    .map(Joueur::getMot)
+                    .findFirst()
+                    .orElse(null);
 
-                if (mot != null && motDevine != null && motDevine.equalsIgnoreCase(mot)) {
-                    System.out.println("Félicitations, vous avez deviné correctement.");
-                    LoggerSingleton.getInstance().log("STATE", "Mr.White a deviné le mot correctement");
-                    gagnant.ajouterGagnant(joueurElimine);
-                    phaseVote.terminerPhase();
-                } else {
-                    System.out.println("Échec. Vous avez été éliminé. Le mot correct était : " + mot);
-                    LoggerSingleton.getInstance().log("STATE", "Mr.White échoue à deviner le mot. Éliminé: " + joueurElimine.getNom());
-
-                    joueurElimine.estEliminer(gestionJoueur);
-                    joueurElimine.setEstVivant();
-                    elimination.ajouterJoueurElimine(joueurElimine);
-                    gestionJoueur.supprimerJoueur(joueurElimine);
-                }
+            if (mot == null) {
+                System.out.println("Erreur : Aucun mot civil trouvé !");
+                return;
             }
 
-        } else {
-            System.out.println("Aucun joueur n'a été trouvé pour élimination.");
-            LoggerSingleton.getInstance().log("STATE", "Aucun joueur trouvé pour élimination");
+            System.out.println("Essayez de deviner le mot : ");
+            Scanner sc = new Scanner(System.in);
+            String reponse = sc.nextLine();
+
+            if (reponse.equalsIgnoreCase(mot)) {
+                System.out.println("Bravo ! Mr White gagne !");
+                gagnant.ajouterGagnant(joueurElimine);
+                phaseVote.terminerPhase();
+            } else {
+                System.out.println("Mauvaise réponse ! Mr White est éliminé.");
+                elimination.eliminer(joueurElimine);
+                gestionJoueur.supprimerJoueur(joueurElimine);
+            }
         }
     }
+
 }

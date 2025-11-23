@@ -15,17 +15,15 @@ public class ImmuniteDecorator extends JoueurDecorator {
     @Override
     public void setEstVivant() {
         if (immuniteActive) {
-            // Immunité activée - le joueur ne peut pas être éliminé
             System.out.println("🛡️ " + getNom() + " est immunisé et ne peut pas être éliminé !");
             LoggerSingleton.getInstance().log("DECORATOR",
                     "Élimination annulée grâce à l'immunité pour " + getNom());
             immuniteActive = false; // L'immunité ne fonctionne qu'une fois
         } else {
-            // Immunité déjà utilisée - élimination normale
-            System.out.println("ℹ️ " + getNom() + " a déjà utilisé son immunité. Élimination normale.");
             super.setEstVivant();
         }
     }
+
 
     @Override
     public boolean isVivant() {
