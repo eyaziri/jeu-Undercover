@@ -94,7 +94,7 @@ public class DistributionRoleState implements GameState {
 
         // Dans la méthode executerEtat, après donnerDecorateurUnique()
         partie.gestionJoueur.donnerDecorateurUnique();
-   System.out.println("\n=== VÉRIFICATION DES POUVOIRS ===");
+        System.out.println("\n=== VÉRIFICATION DES POUVOIRS ===");
         for (Joueur j : partie.gestionJoueur.getListeJoueurs()) {
             if (j instanceof DoubleVoteDecorator) {
                 System.out.println("✓ " + j.getNom() + " a le Double Vote");
@@ -104,7 +104,6 @@ public class DistributionRoleState implements GameState {
         }
         System.out.println("================================\n");
 
-        partie.changerEtat(new DiscussionState());
         partie.changerEtat(new DiscussionState());
     }
 

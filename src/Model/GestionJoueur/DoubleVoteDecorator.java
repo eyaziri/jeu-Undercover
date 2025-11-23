@@ -5,6 +5,8 @@ import Model.Vote.Vote;
 
 public class DoubleVoteDecorator extends JoueurDecorator {
 
+    private boolean pouvoirUtilise = false;
+
     public DoubleVoteDecorator(Joueur joueur) {
         super(joueur);
         LoggerSingleton.getInstance().log("DECORATOR", "Joueur " + joueur.getNom() + " décoré avec Double Vote");
@@ -12,36 +14,25 @@ public class DoubleVoteDecorator extends JoueurDecorator {
 
     @Override
     public void voter(Joueur cible) {
-        System.out.println("🎯 " + joueur.getNom() + " utilise un DOUBLE VOTE !");
+        if (!pouvoirUtilise) {
+            System.out.println("🎯 " + getNom() + " utilise son DOUBLE VOTE !");
 
-        // Premier vote normal
-        super.voter(cible);
-        // Deuxième vote (double)
-        super.voter(cible);
+            // Premier vote
+            super.voter(cible);
+            // Deuxième vote
+            super.voter(cible);
 
-        LoggerSingleton.getInstance().log("DECORATOR",
-                "Double vote appliqué par " + joueur.getNom() + " sur " + cible.getNom() +
-                        " (Total votes: " + cible.getNombreDeVotesRecus() + ")");
+            pouvoirUtilise = true;
+            LoggerSingleton.getInstance().log("DECORATOR",
+                    "Double vote utilisé par " + getNom() + " sur " + cible.getNom() +
+                            " (Total votes: " + cible.getNombreDeVotesRecus() + ")");
+        } else {
+            System.out.println("ℹ️ " + getNom() + " a déjà utilisé son double vote. Vote normal.");
+            super.voter(cible);
+        }
     }
 
-    // S'assurer que toutes les méthodes délèguent au joueur décoré
-    @Override
-    public String getNom() {
-        return joueur.getNom();
-    }
-
-    @Override
-    public String getRole() {
-        return joueur.getRole();
-    }
-
-    @Override
-    public boolean isVivant() {
-        return joueur.isVivant();
-    }
-
-    @Override
-    public void setEstVivant() {
-        joueur.setEstVivant();
+    public boolean isPouvoirUtilise() {
+        return pouvoirUtilise;
     }
 }

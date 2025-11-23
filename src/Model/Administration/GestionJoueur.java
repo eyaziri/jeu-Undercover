@@ -7,6 +7,8 @@ import Logging.LoggerSingleton;
 import Model.GestionJoueur.DoubleVoteDecorator;
 import Model.GestionJoueur.ImmuniteDecorator;
 import Model.GestionJoueur.Joueur;
+import Model.GestionJoueur.JoueurDecorator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -194,34 +196,19 @@ public class GestionJoueur {
         return noms;
     }
 
-    public void donnerDecorateurAleatoire() {
-        if (joueurs.isEmpty()) return;
-
-        Random rand = new Random();
-        int index = rand.nextInt(joueurs.size());
-        Joueur joueur = joueurs.get(index);
-
-        boolean doubleVote = rand.nextBoolean();
-
-        Joueur decorateur;
-
-        if (doubleVote) {
-            decorateur = new DoubleVoteDecorator(joueur);
-            System.out.println(joueur.getNom() + " a reçu le pouvoir DOUBLE VOTE !");
-        } else {
-            decorateur = new ImmuniteDecorator(joueur);
-            System.out.println(joueur.getNom() + " a reçu le pouvoir IMMUNITÉ !");
-        }
-
-        // Remplacer le joueur dans la liste
-        joueurs.set(index, decorateur);
-    }
 
 
     public void donnerDecorateurUnique() {
         if (joueurs.isEmpty()) {
             System.out.println("❌ Aucun joueur disponible pour donner un pouvoir spécial.");
             return;
+        }
+
+        for (Joueur joueur : joueurs) {
+            if (joueur instanceof JoueurDecorator) {
+                System.out.println("⚠️ Un joueur a déjà un pouvoir. Aucun nouveau pouvoir attribué.");
+                return;
+            }
         }
 
         Random rand = new Random();
@@ -243,15 +230,12 @@ public class GestionJoueur {
                     "ImmuniteDecorator appliqué à: " + joueurOriginal.getNom());
         }
 
-        // Remplacer le joueur dans la liste
         joueurs.set(index, joueurAvecPouvoir);
 
-        // Afficher les pouvoirs pour débogage
         afficherPouvoirsSpeciaux();
     }
 
-    // Méthode pour afficher les pouvoirs spéciaux (à ajouter)
-    public void afficherPouvoirsSpeciaux() {
+     public void afficherPouvoirsSpeciaux() {
         System.out.println("\n=== POUVOIRS SPÉCIAUX ACTIFS ===");
         boolean aucunPouvoir = true;
 

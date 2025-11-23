@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-/**
- * Classe abstraite de décorateur pour Joueur
- */
+
 public abstract non-sealed class JoueurDecorator extends Joueur {
 
     protected Joueur joueur;
@@ -127,5 +125,9 @@ public abstract non-sealed class JoueurDecorator extends Joueur {
     @Override
     public boolean isVivant() {
         return joueur.isVivant();
+    }
+
+    public Joueur getJoueurDecore() {
+        return joueur;
     }
 }
