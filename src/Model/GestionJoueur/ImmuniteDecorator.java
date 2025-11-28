@@ -1,8 +1,8 @@
 package Model.GestionJoueur;
-
 import Logging.LoggerSingleton;
 
 public class ImmuniteDecorator extends JoueurDecorator {
+    private boolean immuniteActive = true;
 
     public ImmuniteDecorator(Joueur joueur) {
         super(joueur);
@@ -12,31 +12,32 @@ public class ImmuniteDecorator extends JoueurDecorator {
 
     @Override
     public void setEstVivant() {
-        // Ne rien faire - le joueur est immunisé
-        System.out.println("🛡️ " + joueur.getNom() + " est immunisé et ne peut pas être éliminé !");
-        LoggerSingleton.getInstance().log("DECORATOR",
-                "Élimination annulée grâce à l'immunité pour " + joueur.getNom());
+        if (immuniteActive) {
+            System.out.println("🛡️ " + getNom() + " est immunisé et ne peut pas être éliminé !");
+            LoggerSingleton.getInstance().log("DECORATOR",
+                    "Élimination annulée grâce à l'immunité pour " + getNom());
+            immuniteActive = false; // L'immunité ne fonctionne qu'une fois
+        } else {
+            // ❌ CORRECTION : Appeler setEstVivant() sur le joueur décoré, pas sur this
+            joueur.setEstVivant();
+        }
     }
 
     @Override
     public boolean isVivant() {
-        // Toujours vivant grâce à l'immunité
-        return true;
+        if (immuniteActive) {
+            return true; // Toujours vivant si l'immunité est active
+        }
+        return joueur.isVivant(); // ❌ CORRECTION : utiliser joueur.isVivant()
     }
 
-    // Délégation des autres méthodes
-    @Override
-    public String getNom() {
-        return joueur.getNom();
+    public boolean isImmuniteActive() {
+        return immuniteActive;
     }
-
+    
+    // ✅ AJOUT : Méthode pour récupérer le joueur décoré
     @Override
-    public String getRole() {
-        return joueur.getRole();
-    }
-
-    @Override
-    public void voter(Joueur cible) {
-        joueur.voter(cible);
+    public Joueur getJoueurDecore() {
+        return joueur;
     }
 }

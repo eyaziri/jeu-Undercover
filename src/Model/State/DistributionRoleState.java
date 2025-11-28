@@ -89,25 +89,21 @@ public class DistributionRoleState implements GameState {
             }
         }
 
+        // ✅ CORRECTION : AJOUTER CET APPEL QUI MANQUE !
+        System.out.println("🔍 DEBUG: Avant d'appeler donnerDecorateurUnique()");
+        
         // 🎁 Donner UN SEUL super pouvoir
         partie.gestionJoueur.donnerDecorateurUnique();
-
-        // Dans la méthode executerEtat, après donnerDecorateurUnique()
-        partie.gestionJoueur.donnerDecorateurUnique();
-   System.out.println("\n=== VÉRIFICATION DES POUVOIRS ===");
-        for (Joueur j : partie.gestionJoueur.getListeJoueurs()) {
-            if (j instanceof DoubleVoteDecorator) {
-                System.out.println("✓ " + j.getNom() + " a le Double Vote");
-            } else if (j instanceof ImmuniteDecorator) {
-                System.out.println("✓ " + j.getNom() + " a l'Immunité");
-            }
-        }
+        
+        System.out.println("🔍 DEBUG: Après avoir appelé donnerDecorateurUnique()");
+        
+        // ✅ Vérification des pouvoirs
+        System.out.println("\n=== VÉRIFICATION DES POUVOIRS ===");
+        partie.gestionJoueur.afficherPouvoirsSpeciaux();
         System.out.println("================================\n");
 
         partie.changerEtat(new DiscussionState());
-        partie.changerEtat(new DiscussionState());
     }
-
 
     @Override
     public void sortirEtat(GestionPartie partie) {

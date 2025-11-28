@@ -7,6 +7,7 @@ import Model.GestionJoueur.Gagnant;
 import Model.GestionJoueur.Score;
 import Model.State.GameState;
 import Model.State.MenuState;
+import Model.State.DistributionRoleState; // ← IMPORTANT
 import Model.Vote.Elimination;
 
 public class GestionPartie {
@@ -45,7 +46,11 @@ public class GestionPartie {
 
     public void demarrer() {
         LoggerSingleton.getInstance().log("STATE", "Démarrage de la partie");
-        etatCourant.entrerEtat(this);
+        
+        // ✅ CORRECTION : Changer directement vers DistributionRoleState pour test
+        System.out.println("🔍 DEBUG: Passage à DistributionRoleState");
+        changerEtat(new DistributionRoleState());
+        
         etatCourant.executerEtat(this);
     }
 }

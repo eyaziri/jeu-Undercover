@@ -7,6 +7,8 @@ import Logging.LoggerSingleton;
 import Model.GestionJoueur.DoubleVoteDecorator;
 import Model.GestionJoueur.ImmuniteDecorator;
 import Model.GestionJoueur.Joueur;
+import Model.GestionJoueur.JoueurDecorator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -194,82 +196,119 @@ public class GestionJoueur {
         return noms;
     }
 
-    public void donnerDecorateurAleatoire() {
-        if (joueurs.isEmpty()) return;
-
-        Random rand = new Random();
-        int index = rand.nextInt(joueurs.size());
-        Joueur joueur = joueurs.get(index);
-
-        boolean doubleVote = rand.nextBoolean();
-
-        Joueur decorateur;
-
-        if (doubleVote) {
-            decorateur = new DoubleVoteDecorator(joueur);
-            System.out.println(joueur.getNom() + " a reçu le pouvoir DOUBLE VOTE !");
-        } else {
-            decorateur = new ImmuniteDecorator(joueur);
-            System.out.println(joueur.getNom() + " a reçu le pouvoir IMMUNITÉ !");
-        }
-
-        // Remplacer le joueur dans la liste
-        joueurs.set(index, decorateur);
+public void donnerDecorateurUnique() {
+    System.out.println("🎮 DONNER_DECORATEUR_UNIQUE - APPELÉ !");
+    System.out.println("🔍 DEBUG: donnerDecorateurUnique() - DÉBUT");
+    System.out.println("🔍 DEBUG: Nombre de joueurs: " + joueurs.size());
+    
+    if (joueurs.isEmpty()) {
+        System.out.println("❌ Aucun joueur disponible pour donner un pouvoir spécial.");
+        return;
     }
-
-
-    public void donnerDecorateurUnique() {
-        if (joueurs.isEmpty()) {
-            System.out.println("❌ Aucun joueur disponible pour donner un pouvoir spécial.");
-            return;
+    
+    // ✅ VÉRIFICATION : Y a-t-il déjà des joueurs avec des pouvoirs ?
+    boolean dejaUnPouvoir = false;
+    for (Joueur joueur : joueurs) {
+        if (joueur instanceof JoueurDecorator) {
+            System.out.println("⚠️ ATTENTION: Un pouvoir existe déjà sur " + joueur.getNom() + 
+                             " (" + joueur.getClass().getSimpleName() + ") - Arrêt de l'attribution");
+            dejaUnPouvoir = true;
+            break;
         }
-
-        Random rand = new Random();
-        int index = rand.nextInt(joueurs.size());
-        Joueur joueurOriginal = joueurs.get(index);
-
-        boolean doubleVote = rand.nextBoolean();
-        Joueur joueurAvecPouvoir;
-
-        if (doubleVote) {
-            joueurAvecPouvoir = new DoubleVoteDecorator(joueurOriginal);
-            System.out.println("\n🎁 " + joueurOriginal.getNom() + " a reçu le pouvoir DOUBLE VOTE !");
-            LoggerSingleton.getInstance().log("DECORATOR",
-                    "DoubleVoteDecorator appliqué à: " + joueurOriginal.getNom());
-        } else {
-            joueurAvecPouvoir = new ImmuniteDecorator(joueurOriginal);
-            System.out.println("\n🎁 " + joueurOriginal.getNom() + " a reçu le pouvoir IMMUNITÉ !");
-            LoggerSingleton.getInstance().log("DECORATOR",
-                    "ImmuniteDecorator appliqué à: " + joueurOriginal.getNom());
-        }
-
-        // Remplacer le joueur dans la liste
-        joueurs.set(index, joueurAvecPouvoir);
-
-        // Afficher les pouvoirs pour débogage
+    }
+    
+    if (dejaUnPouvoir) {
+        System.out.println("❌ Des pouvoirs ont déjà été attribués dans cette partie. Aucun nouveau pouvoir attribué.");
         afficherPouvoirsSpeciaux();
+        return; // 🛑 STOP - pas de nouveaux pouvoirs
+    }
+    
+    // Vérifier qu'il y a au moins 2 joueurs pour donner 2 pouvoirs
+    if (joueurs.size() < 2) {
+        System.out.println("❌ Pas assez de joueurs pour attribuer 2 pouvoirs. Minimum requis: 2 joueurs.");
+        return;
+    }
+    
+    // Afficher tous les joueurs avant attribution
+    System.out.println("🔍 DEBUG: Liste des joueurs avant attribution:");
+    for (Joueur j : joueurs) {
+        System.out.println("  - " + j.getNom() + " (" + j.getClass().getSimpleName() + ")");
     }
 
-    // Méthode pour afficher les pouvoirs spéciaux (à ajouter)
+    // ✅ MODIFICATION : Attribuer DEUX pouvoirs à DEUX joueurs différents
+    Random rand = new Random();
+    
+    // Premier joueur - Double Vote
+    int indexDoubleVote = rand.nextInt(joueurs.size());
+    Joueur joueurDoubleVote = joueurs.get(indexDoubleVote);
+    
+    System.out.println("🔍 DEBUG: Joueur sélectionné pour DOUBLE VOTE: " + joueurDoubleVote.getNom() + " (index: " + indexDoubleVote + ")");
+    
+    Joueur joueurAvecDoubleVote = new DoubleVoteDecorator(joueurDoubleVote);
+    System.out.println("\n🎁 " + joueurDoubleVote.getNom() + " a reçu le pouvoir DOUBLE VOTE !");
+    LoggerSingleton.getInstance().log("DECORATOR", "DoubleVoteDecorator appliqué à: " + joueurDoubleVote.getNom());
+    
+    joueurs.set(indexDoubleVote, joueurAvecDoubleVote);
+    
+    // Deuxième joueur - Immunité (doit être différent du premier)
+    int indexImmunite;
+    do {
+        indexImmunite = rand.nextInt(joueurs.size());
+    } while (indexImmunite == indexDoubleVote); // Assurer que c'est un joueur différent
+    
+    Joueur joueurImmunite = joueurs.get(indexImmunite);
+    
+    // Si le joueur sélectionné est déjà décoré (ne devrait pas arriver), prendre le joueur original
+    if (joueurImmunite instanceof JoueurDecorator) {
+        joueurImmunite = ((JoueurDecorator) joueurImmunite).getJoueurDecore();
+    }
+    
+    System.out.println("🔍 DEBUG: Joueur sélectionné pour IMMUNITÉ: " + joueurImmunite.getNom() + " (index: " + indexImmunite + ")");
+    
+    Joueur joueurAvecImmunite = new ImmuniteDecorator(joueurImmunite);
+    System.out.println("\n🎁 " + joueurImmunite.getNom() + " a reçu le pouvoir IMMUNITÉ !");
+    LoggerSingleton.getInstance().log("DECORATOR", "ImmuniteDecorator appliqué à: " + joueurImmunite.getNom());
+    
+    joueurs.set(indexImmunite, joueurAvecImmunite);
+    
+    // Afficher tous les joueurs après attribution
+    System.out.println("🔍 DEBUG: Liste des joueurs après attribution:");
+    for (Joueur j : joueurs) {
+        System.out.println("  - " + j.getNom() + " (" + j.getClass().getSimpleName() + ")");
+    }
+    
+    System.out.println("🔍 DEBUG: donnerDecorateurUnique() - FIN");
+    
+    // Afficher le résumé des pouvoirs attribués
+    System.out.println("\n🎉 DEUX POUVOIRS ATTRIBUÉS :");
+    System.out.println("🎯 " + joueurDoubleVote.getNom() + " - DOUBLE VOTE");
+    System.out.println("🛡️ " + joueurImmunite.getNom() + " - IMMUNITÉ");
+    System.out.println("================================\n");
+
+    afficherPouvoirsSpeciaux();
+}    
     public void afficherPouvoirsSpeciaux() {
-        System.out.println("\n=== POUVOIRS SPÉCIAUX ACTIFS ===");
-        boolean aucunPouvoir = true;
+    System.out.println("\n=== POUVOIRS SPÉCIAUX ACTIFS ===");
+    boolean aucunPouvoir = true;
 
-        for (Joueur joueur : joueurs) {
-            if (joueur instanceof DoubleVoteDecorator) {
-                System.out.println("🎯 " + joueur.getNom() + " - DOUBLE VOTE");
-                aucunPouvoir = false;
-            } else if (joueur instanceof ImmuniteDecorator) {
-                System.out.println("🛡️ " + joueur.getNom() + " - IMMUNITÉ");
-                aucunPouvoir = false;
-            }
+    for (Joueur joueur : joueurs) {
+        if (joueur instanceof DoubleVoteDecorator) {
+            DoubleVoteDecorator decorator = (DoubleVoteDecorator) joueur;
+            String etat = decorator.hasDoubleVote() ? "ACTIF" : "UTILISÉ";
+            System.out.println("🎯 " + joueur.getNom() + " - DOUBLE VOTE (" + etat + ")");
+            aucunPouvoir = false;
+        } else if (joueur instanceof ImmuniteDecorator) {
+            ImmuniteDecorator decorator = (ImmuniteDecorator) joueur;
+            String etat = decorator.isImmuniteActive() ? "ACTIVE" : "UTILISÉE";
+            System.out.println("🛡️ " + joueur.getNom() + " - IMMUNITÉ (" + etat + ")");
+            aucunPouvoir = false;
         }
-
-        if (aucunPouvoir) {
-            System.out.println("Aucun pouvoir spécial actif");
-        }
-        System.out.println("================================\n");
     }
 
+    if (aucunPouvoir) {
+        System.out.println("Aucun pouvoir spécial actif");
+    }
+    System.out.println("================================\n");
+}
 
 }

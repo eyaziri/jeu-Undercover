@@ -10,6 +10,8 @@ public class MenuState implements GameState {
     public void entrerEtat(GestionPartie partie) {
         System.out.println("\n=== MENU PRINCIPAL ===");
         LoggerSingleton.getInstance().log("STATE", "Entrée dans l'état MenuState");
+        System.out.println("🔍 DEBUG: MenuState -> DistributionRoleState");
+        partie.changerEtat(new DistributionRoleState());
     }
 
     @Override

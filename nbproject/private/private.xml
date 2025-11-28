@@ -3,7 +3,30 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/Desktop/v4/jeu-Undercover/src/Controller/CinquiemeBPageController.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Administration/JoueurFactory.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/GestionJoueur/Joueur.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/GestionJoueur/MrWhite.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Vote/Elimination.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Forum/Forum.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Vote/GestionVotes.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/State/VoteState.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Vote/Vote.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/State/GameOverState.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Logging/LoggerSingleton.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Administration/GestionPartie.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/State/GameState.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Forum/Discussion.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/GestionJoueur/DoubleVoteDecorator.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Administration/GestionRole.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/State/DistributionRoleState.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Forum/ElementForum.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Administration/GestionJoueur.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/GestionJoueur/ImmuniteDecorator.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/State/MenuState.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/GestionJoueur/Gagnant.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/State/DiscussionState.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/GestionJoueur/JoueurDecorator.java</file>
+            <file>file:/C:/Users/user/Desktop/v44/jeu-Undercover/src/Model/Vote/PhaseVote.java</file>
         </group>
     </open-files>
 </project-private>

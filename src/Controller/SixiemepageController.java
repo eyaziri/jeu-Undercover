@@ -77,35 +77,41 @@ public class SixiemepageController implements Initializable {
     
     
     
-    private void recordVote() throws IOException {
-        String voteNom = caseAvote.getText().trim();
-        if (voteNom.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez entrer un nom avant de voter.");
-            return;
-        }
-
-        Joueur joueurVote = gestionJoueur.getListeJoueurs()
-                .stream()
-                .filter(j -> j.getNom().equalsIgnoreCase(voteNom))
-                .findFirst()
-                .orElse(null);
-
-        if (joueurVote == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun joueur trouvé avec ce nom.");
-            return;
-        }
-
-        joueurVote.setnombreDeVotesRecus();
-        currentPlayerIndex++;
-
-        if (currentPlayerIndex < gestionJoueur.longueurListe()) {
-            updatePlayerCounterDisplay();
-            caseAvote.clear();
-        } else {
-            handleVotesResult();
-        }
+private void recordVote() throws IOException {
+    String voteNom = caseAvote.getText().trim();
+    if (voteNom.isEmpty()) {
+        showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez entrer un nom avant de voter.");
+        return;
     }
+
+    // Trouver le joueur qui vote (votant)
+    Joueur joueurVotant = gestionJoueur.getListeJoueurs().get(currentPlayerIndex);
     
+    // Trouver le joueur cible
+    Joueur joueurCible = gestionJoueur.getListeJoueurs()
+            .stream()
+            .filter(j -> j.getNom().equalsIgnoreCase(voteNom))
+            .findFirst()
+            .orElse(null);
+
+    if (joueurCible == null) {
+        showAlert(Alert.AlertType.ERROR, "Erreur", "Aucun joueur trouvé avec ce nom.");
+        return;
+    }
+
+    // ✅ CORRECTION : Utiliser voter() qui active les décorateurs
+    System.out.println("🗳️ " + joueurVotant.getNom() + " vote pour " + joueurCible.getNom());
+    joueurVotant.voter(joueurCible); // ✅ Cette méthode peut être décorée
+    
+    currentPlayerIndex++;
+
+    if (currentPlayerIndex < gestionJoueur.longueurListe()) {
+        updatePlayerCounterDisplay();
+        caseAvote.clear();
+    } else {
+        handleVotesResult();
+    }
+}    
     
 private Joueur handleVotesResult() throws IOException {
     Joueur joueurElimine = gestionJoueur.getListeJoueurs()
@@ -114,22 +120,46 @@ private Joueur handleVotesResult() throws IOException {
             .orElse(null);
 
     if (joueurElimine != null) {
-        joueur1=joueurElimine;
-        gestionJoueur.supprimerJoueur(joueurElimine);
-        admin.setNombreJoueur(admin.getNombreJoueur()-1);
-        elimination.ajouterJoueurElimine(joueurElimine);
+        joueur1 = joueurElimine;
+        
+        // ✅ CORRECTION : Vérifier l'immunité AVANT de supprimer le joueur
+        System.out.println("🔍 Tentative d'élimination de " + joueurElimine.getNom() + 
+                         " (" + joueurElimine.getClass().getSimpleName() + ")");
+        
+        // Utiliser setEstVivant() qui active la logique d'immunité du décorateur
+        joueurElimine.setEstVivant();
+        
+        // Vérifier si le joueur est toujours vivant après tentative d'élimination
+        if (!joueurElimine.isVivant()) {
+            // ❌ Joueur effectivement éliminé (pas immunisé ou immunité déjà utilisée)
+            System.out.println("❌ " + joueurElimine.getNom() + " a été éliminé !");
+            
+            elimination.ajouterJoueurElimine(joueurElimine);
+            gestionJoueur.supprimerJoueur(joueurElimine);
+            admin.setNombreJoueur(admin.getNombreJoueur() - 1);
+        } else {
+            // ✅ Joueur immunisé - ne pas l'éliminer
+            System.out.println("🛡️ " + joueurElimine.getNom() + " est immunisé et ne peut pas être éliminé !");
+            
+            // Réinitialiser ses votes pour le prochain tour
+            joueurElimine.resetVotes();  // ✅ Utilise la méthode publique            
+            // Afficher une alerte pour informer les joueurs
+            showAlert(Alert.AlertType.INFORMATION, "Immunité", 
+                     "Le joueur " + joueurElimine.getNom() + " est immunisé et ne peut pas être éliminé !");
+            
+            resetForNextRound();
+            return null; // Aucun joueur éliminé ce tour
+        }
 
         if (joueurElimine.getRole().equalsIgnoreCase("MrWhite")) {
-            
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/huitiemePage.fxml"));
             Parent root1 = fxmlLoader.load();
-            // Réutiliser l'étape actuelle
             Stage stage = (Stage) gopage7.getScene().getWindow();
             stage.setTitle("troisieme Page");
             stage.setScene(new Scene(root1));
             stage.show(); 
-            } else {
-            // Sinon, affiche l'alerte d'élimination et réinitialise pour le prochain tour
+        } else {
+            // Afficher l'alerte d'élimination seulement si le joueur n'était pas immunisé
             showAlert(Alert.AlertType.INFORMATION, "Élimination", "Le joueur " + joueurElimine.getNom() +
                     " est éliminé avec " + joueurElimine.getNombreDeVotesRecus() + " votes. Rôle : " +
                     joueurElimine.getRole());
@@ -154,31 +184,29 @@ private Joueur handleVotesResult() throws IOException {
                     gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
                     System.out.println("Winners: " + gagnant.getGagnants());
                     for (Joueur joueur : joueurs) {
-            
-                if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
-                    joueur.setScore(6);
-                    System.out.println(joueur.getScore());// Le gagnant obtient 6 points
-                } else {
-                    joueur.setScore(0);
-                    System.out.println(joueur.getScore());// Les autres survivants obtiennent 3 points
-                }
-                score.getScores().put(joueur, joueur.getScore());
-                }
-
-                for (Joueur joueur : elimination.getJoueursElimines()) {
-                    if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
-                        joueur.setScore(3);
-                        System.out.println(joueur.getScore());// Le gagnant obtient 3 points s'il est éliminé
-                    } else {
-                        joueur.setScore(0);
-                        System.out.println(joueur.getScore());// Les autres éliminés obtiennent 0 point
+                        if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
+                            joueur.setScore(6);
+                            System.out.println(joueur.getScore());
+                        } else {
+                            joueur.setScore(0);
+                            System.out.println(joueur.getScore());
+                        }
+                        score.getScores().put(joueur, joueur.getScore());
                     }
-                    score.getScores().put(joueur, joueur.getScore());
-                } 
+
+                    for (Joueur joueur : elimination.getJoueursElimines()) {
+                        if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
+                            joueur.setScore(3);
+                            System.out.println(joueur.getScore());
+                        } else {
+                            joueur.setScore(0);
+                            System.out.println(joueur.getScore());
+                        }
+                        score.getScores().put(joueur, joueur.getScore());
+                    } 
             
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/neuviemePage.fxml"));
                     Parent root1 = fxmlLoader.load();
-                    // Réutiliser l'étape actuelle
                     Stage stage = (Stage) gopage7.getScene().getWindow();
                     stage.setTitle("troisieme Page");
                     stage.setScene(new Scene(root1));
@@ -189,12 +217,47 @@ private Joueur handleVotesResult() throws IOException {
                     gagnant.determinerGagnant(joueurs);
                     System.out.println("Winners: " + gagnant.getGagnants());
                     for (Joueur joueur : joueurs) {
+                        if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
+                            joueur.setScore(6);
+                            System.out.println(joueur.getScore());
+                        } else {
+                            joueur.setScore(0);
+                            System.out.println(joueur.getScore());
+                        }
+                        score.getScores().put(joueur, joueur.getScore());
+                    }
+
+                    for (Joueur joueur : elimination.getJoueursElimines()) {
+                        if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
+                            joueur.setScore(3);
+                            System.out.println(joueur.getScore());
+                        } else {
+                            joueur.setScore(0);
+                            System.out.println(joueur.getScore());
+                        }
+                        score.getScores().put(joueur, joueur.getScore());
+                    } 
+                    
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/neuviemePage.fxml"));
+                    Parent root1 = fxmlLoader.load();
+                    Stage stage = (Stage) gopage7.getScene().getWindow();
+                    stage.setTitle("troisieme Page");
+                    stage.setScene(new Scene(root1));
+                    stage.show();
+                }
+            } 
+            else if ((nombreDeJoueurRestantMrWhite >= 1 && nombreDeJoueurRestantCivil == 0 && nombreDeJoueurRestantUndercover == 0) || 
+                     (nombreDeJoueurRestantMrWhite >= 1 && nombreDeJoueurRestantCivil == 1 && nombreDeJoueurRestantUndercover == 0) || 
+                     (nombreDeJoueurRestantMrWhite >= 1 && nombreDeJoueurRestantCivil == 0 && nombreDeJoueurRestantUndercover == 1)) {
+                System.out.println("Les MrWhite ont gagne !");
+                gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
+                for (Joueur joueur : joueurs) {
                     if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
                         joueur.setScore(6);
-                        System.out.println(joueur.getScore());// Le gagnant obtient 6 points
+                        System.out.println(joueur.getScore());
                     } else {
                         joueur.setScore(0);
-                        System.out.println(joueur.getScore());// Les autres survivants obtiennent 3 points
+                        System.out.println(joueur.getScore());
                     }
                     score.getScores().put(joueur, joueur.getScore());
                 }
@@ -202,76 +265,35 @@ private Joueur handleVotesResult() throws IOException {
                 for (Joueur joueur : elimination.getJoueursElimines()) {
                     if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
                         joueur.setScore(3);
-                        System.out.println(joueur.getScore());// Le gagnant obtient 3 points s'il est éliminé
+                        System.out.println(joueur.getScore());
                     } else {
-                        joueur.setScore(0);
-                        System.out.println(joueur.getScore());// Les autres éliminés obtiennent 0 point
+                        joueur.setScore(0); 
+                        System.out.println(joueur.getScore());
                     }
                     score.getScores().put(joueur, joueur.getScore());
                 } 
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/neuviemePage.fxml"));
-                    Parent root1 = fxmlLoader.load();
-                    // Réutiliser l'étape actuelle
-                    Stage stage = (Stage) gopage7.getScene().getWindow();
-                    stage.setTitle("troisieme Page");
-                    stage.setScene(new Scene(root1));
-                    stage.show();
-
-                }
-            } 
-            else if ((nombreDeJoueurRestantMrWhite >= 1&&nombreDeJoueurRestantCivil==0&&nombreDeJoueurRestantUndercover==0) || (nombreDeJoueurRestantMrWhite >= 1&&nombreDeJoueurRestantCivil==1 &&nombreDeJoueurRestantUndercover==0) || (nombreDeJoueurRestantMrWhite >= 1&&nombreDeJoueurRestantCivil==0 &&nombreDeJoueurRestantUndercover==1) )
-            {
-                System.out.println("Les MrWhite ont gagne !");
-                gagnant.determinerGagnant(gestionJoueur.getListeJoueurs());
-                for (Joueur joueur : joueurs) {
-            if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
-                joueur.setScore(6);
-                System.out.println(joueur.getScore());// Le gagnant obtient 6 points
-            } else {
-                joueur.setScore(0);
-                System.out.println(joueur.getScore());
-
+                
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/neuviemePage.fxml"));
+                Parent root1 = fxmlLoader.load();
+                Stage stage = (Stage) gopage7.getScene().getWindow();
+                stage.setTitle("troisieme Page");
+                stage.setScene(new Scene(root1));
+                stage.show();
             }
-            score.getScores().put(joueur, joueur.getScore());
-        }
-
-        for (Joueur joueur : elimination.getJoueursElimines()) {
-            if (joueur.getRole().equalsIgnoreCase(gagnant.getRole())) {
-                joueur.setScore(3);
-                System.out.println(joueur.getScore());
-            } else {
-                joueur.setScore(0); 
-                System.out.println(joueur.getScore());
-            }
-            score.getScores().put(joueur, joueur.getScore());
-        } 
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/neuviemePage.fxml"));
-                    Parent root1 = fxmlLoader.load();
-                    // Réutiliser l'étape actuelle
-                    Stage stage = (Stage) gopage7.getScene().getWindow();
-                    stage.setTitle("troisieme Page");
-                    stage.setScene(new Scene(root1));
-                    stage.show();
-            }
-            else if (nombreDeJoueurRestantMrWhite >= 1)
-            {
+            else if (nombreDeJoueurRestantMrWhite >= 1) {
                 System.out.println("Le jeu continue, car Mr. White est encore en jeu.");
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/septiemePage.fxml"));
-                    Parent root1 = fxmlLoader.load();
-                    // Réutiliser l'étape actuelle
-                    Stage stage = (Stage) gopage7.getScene().getWindow();
-                    stage.setTitle("troisieme Page");
-                    stage.setScene(new Scene(root1));
-                    stage.show();
+                Parent root1 = fxmlLoader.load();
+                Stage stage = (Stage) gopage7.getScene().getWindow();
+                stage.setTitle("troisieme Page");
+                stage.setScene(new Scene(root1));
+                stage.show();
             }
-
         }
-                resetForNextRound();  
-
-        }
-        return joueurElimine;
+        resetForNextRound();  
+    }
+    return joueurElimine;
 }
-
     private void resetForNextRound() {
         currentPlayerIndex = 0;
         initializePlayerCount();
