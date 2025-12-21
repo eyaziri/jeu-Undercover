@@ -10,7 +10,6 @@ import Model.GestionJoueur.MrWhite;
 import Model.GestionJoueur.Undercover;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,219 +22,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javax.swing.JOptionPane;
-
-/**
- * FXML Controller class
- */
-/*public class TroisiemePageController implements Initializable {
-
-    private Admin admin;
-    private GestionJoueur gestionJoueur;
-    private int playersRemaining;
-    private ArrayList<String> names;
-    private int compteur=0;
-    private int totalCivil = 0;
-    private int totalUndercover = 0;
-    private int totalMrWhite = 0;
-    
-    private ListeMots listeMotPartie = new ListeMots();
-    @FXML
-    private Button goPage5;
-
-    @FXML
-    private TextField nomJoueur;
-    @FXML
-    private Label joueurPret;
-    
-
-    @FXML
-    void allerPage5(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/cinquiemePage.fxml"));
-        Parent root1 = fxmlLoader.load();
-        Stage stage = (Stage) goPage5.getScene().getWindow();
-        stage.setTitle("Cinquième Page");
-        stage.setScene(new Scene(root1));
-        stage.show();
-    }
-
-    @FXML
-    void manipulerNomJoueur(ActionEvent event) throws IOException {
-        admin = DeuxiemePageController.admin;
-        gestionJoueur = DeuxiemePageController.gestionJoueur;
-        
-        
-
-        if (names == null || names.isEmpty()) {
-            initializePlayerCount(); // Initialisation des joueurs restants et des noms
-        }
-
-        playersRemaining = admin.getNombreJoueur();
-
-        String playerName = nomJoueur.getText().trim();
-        if (names.contains(playerName)) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Nom déjà utilisé");
-        alert.setContentText("Le nom de joueur est déjà utilisé. Veuillez choisir un autre nom.");
-        alert.showAndWait();
-        return; // Si le nom existe déjà, on arrête l'exécution de la méthode
-    }
-        if (playersRemaining <= 0 || playerName.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Avertissement");
-            alert.setHeaderText(null);
-            alert.setContentText("Veuillez entrer un nom valide ou vérifier le nombre de joueurs restant.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Gérer le nom dans la liste des joueurs
-        int currentIndex = admin.getNombreJoueur() - playersRemaining;
-        if (currentIndex < names.size()) {
-            names.set(currentIndex, playerName); // Mettre à jour le nom si le joueur existe déjà dans la liste
-        } else {
-            names.add(playerName); // Ajouter un nouveau nom si le joueur n'existe pas encore dans la liste
-        }
-
-        // Générer un rôle pour le joueur
-        Joueur joueurRole = null;
-        String role = new Role().donnerRoleAleatoire();
-        
-        switch (role) {
-            case "Civile":
-                if (totalCivil < gestionJoueur.getNombreCivil()) {
-                    joueurRole = new Civil();
-                    joueurRole.setRole("Civile");
-                    joueurRole.setNom(playerName);
-
-                    String motCivil = joueurRole.getMot();
-                    if (motCivil == null) {
-                        listeMotPartie.associerMotDeCivilEtDeUndercover(joueurRole);
-                        gestionJoueur.setMotCivil(joueurRole.getMot());
-                        gestionJoueur.setMotUndercover(listeMotPartie.getMotUndercover(joueurRole.getMot()));
-                    } else {
-                        joueurRole.setMot(motCivil);
-                    }
-                    totalCivil=totalCivil+1;
-                    compteur=compteur+1;
-                    gestionJoueur.ajouterJoueur(joueurRole);
-                    playersRemaining=playersRemaining-1;
-                    ouvrirQuatriemePage(joueurRole);
-                }
-                break;
-
-            case "Undercover":
-                if (totalUndercover < gestionJoueur.getNombreUndercover()) {
-                    joueurRole = new Undercover();
-                    joueurRole.setRole("Undercover");
-                    joueurRole.setNom(playerName);
-
-                    String motUndercover = joueurRole.getMot();
-                    if (motUndercover == null) {
-                        listeMotPartie.associerMotDeCivilEtDeUndercover(joueurRole);
-                        gestionJoueur.setMotUndercover(joueurRole.getMot());
-                        gestionJoueur.setMotCivil(listeMotPartie.getMotCivil(joueurRole.getMot()));
-                    } else {
-                        joueurRole.setMot(motUndercover);
-                    }
-                    totalUndercover=totalUndercover+1;
-                    compteur=compteur+1;
-                    gestionJoueur.ajouterJoueur(joueurRole);
-                    playersRemaining=playersRemaining-1;
-                    ouvrirQuatriemePage(joueurRole);
-                    
-                }
-                break;
-
-            case "MrWhite":
-                if (totalMrWhite < gestionJoueur.getNombreMrWhite()) {
-                    joueurRole = new MrWhite();
-                    joueurRole.setNom(playerName);
-                    joueurRole.setRole("MrWhite");
-                    joueurRole.setMot("Tu es Mr White!");
-                    
-                    totalMrWhite=totalMrWhite+1;
-                    compteur=compteur+1;
-                    gestionJoueur.ajouterJoueur(joueurRole);
-                    playersRemaining=playersRemaining-1;
-                    ouvrirQuatriemePage(joueurRole);
-                    
-                }
-                break;
-
-            default:
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur");
-                alert.setHeaderText(null);
-                alert.setContentText("Impossible d'attribuer un rôle valide.");
-                alert.showAndWait();
-                return;
-                
-        }
-
-        if (compteur == admin.getNombreJoueur()) {
-
-           
-            goPage5.setDisable(false);
-            nomJoueur.setDisable(true);
-            joueurPret.setText("Tout les joueurs sont recu leur role ");
-            gestionJoueur.AffichageListeJoueurs();
-
-        }
-        nomJoueur.clear();
-
-        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-        successAlert.setTitle("Information");
-        successAlert.setHeaderText(null);
-        successAlert.setContentText("Joueur " + playerName + " ajouté avec succès.");
-        successAlert.showAndWait();
-    }
-
-    private void ouvrirQuatriemePage(Joueur joueur) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/quatriemeRolePage.fxml"));
-            Parent root = loader.load();
-
-            QuatriemeRolePageController controller = loader.getController();
-            controller.setJoueur(joueur);
-            Stage stage = new Stage();
-            stage.setTitle("Rôle de " + joueur.getNom());
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Impossible d'ouvrir la page suivante.");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-        }
-    }
-
-    private void initializePlayerCount() {
-        playersRemaining = DeuxiemePageController.admin.getNombreJoueur();
-        names = new ArrayList<>();
-        for (int i = 0; i < playersRemaining; i++) {
-            names.add(""); // Ajouter des chaînes vides pour chaque joueur
-        }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        goPage5.setDisable(true);
-    
-        goPage5.setOnAction(event -> {
-            try {
-                allerPage5(event);  // Ou la méthode de votre choix
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-}*/
-
-
 
 /**
  * FXML Controller class
@@ -245,21 +31,29 @@ public class TroisiemePageController implements Initializable {
     private Admin admin;
     private GestionJoueur gestionJoueur;
     private int playersRemaining;
-    private int compteur=0;
+    private int compteur = 0;
     private int totalCivil = 0;
     private int totalUndercover = 0;
     private int totalMrWhite = 0;
     private ListeMots listeMotPartie = new ListeMots();
+    
     @FXML
     private Button goPage5;
-
     @FXML
     private TextField nomJoueur;
-     @FXML
+    @FXML
     private Label joueurPret;
 
     @FXML
     void allerPage5(ActionEvent event) throws IOException {
+        // ✅ CORRECTION : Appeler donnerDecorateurUnique() ici aussi pour être sûr
+        /*System.out.println("🔍 allerPage5 appelé - Attribution des pouvoirs");
+        if (DeuxiemePageController.gestionJoueur != null) {
+            DeuxiemePageController.gestionJoueur.donnerDecorateurUnique();
+        } else {
+            System.out.println("❌ ERREUR: gestionJoueur est null");
+        }*/
+        
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/cinquiemePage.fxml"));
         Parent root1 = fxmlLoader.load();
         Stage stage = (Stage) goPage5.getScene().getWindow();
@@ -270,12 +64,30 @@ public class TroisiemePageController implements Initializable {
 
     @FXML
     void manipulerNomJoueur(ActionEvent event) throws IOException {
+        // ✅ CORRECTION : Vérification null plus robuste
+        if (DeuxiemePageController.admin == null || DeuxiemePageController.gestionJoueur == null) {
+            System.out.println("❌ ERREUR: admin ou gestionJoueur est null");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Erreur d'initialisation. Veuillez redémarrer le jeu.");
+            alert.showAndWait();
+            return;
+        }
+
         admin = DeuxiemePageController.admin;
         gestionJoueur = DeuxiemePageController.gestionJoueur;
 
         playersRemaining = admin.getNombreJoueur();
-
         String playerName = nomJoueur.getText().trim();
+
+        // ✅ DEBUG : Logs de débogage détaillés
+        System.out.println("🔍 DEBUG: manipulerNomJoueur appelé");
+        System.out.println("🔍 DEBUG: compteur = " + compteur + ", admin.getNombreJoueur() = " + admin.getNombreJoueur());
+        System.out.println("🔍 DEBUG: totalCivil = " + totalCivil + "/" + gestionJoueur.getNombreCivil());
+        System.out.println("🔍 DEBUG: totalUndercover = " + totalUndercover + "/" + gestionJoueur.getNombreUndercover());
+        System.out.println("🔍 DEBUG: totalMrWhite = " + totalMrWhite + "/" + gestionJoueur.getNombreMrWhite());
+        System.out.println("🔍 DEBUG: Nom joueur = '" + playerName + "'");
 
         if (playersRemaining <= 0 || playerName.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -286,11 +98,17 @@ public class TroisiemePageController implements Initializable {
             return;
         }
 
-        // Gérer le nom dans la liste des joueurs
+        // Générer un rôle pour le joueur
         Joueur joueurRole = null;
         String role = new Role().donnerRoleAleatoire();
+        System.out.println("🔍 DEBUG: Rôle aléatoire généré = " + role);
 
-        while (true) { // Boucle pour gérer automatiquement un rôle valide
+        boolean roleAttribue = false;
+        int tentatives = 0;
+        final int MAX_TENTATIVES = 10; // Éviter une boucle infinie
+
+        while (!roleAttribue && tentatives < MAX_TENTATIVES) {
+            tentatives++;
             switch (role) {
                 case "Civile":
                     if (totalCivil < gestionJoueur.getNombreCivil()) {
@@ -307,9 +125,12 @@ public class TroisiemePageController implements Initializable {
                             joueurRole.setMot(motCivil);
                         }
                         totalCivil++;
-                        break; // Rôle trouvé, on sort de la boucle
+                        roleAttribue = true;
+                        System.out.println("🔍 DEBUG: Civile attribué à " + playerName);
+                    } else {
+                        role = choisirRoleAlternatif(role);
+                        System.out.println("🔍 DEBUG: Civile complet, nouvel essai avec: " + role);
                     }
-                    role = choisirRoleAlternatif(role);
                     break;
 
                 case "Undercover":
@@ -327,9 +148,12 @@ public class TroisiemePageController implements Initializable {
                             joueurRole.setMot(motUndercover);
                         }
                         totalUndercover++;
-                        break; // Rôle trouvé, on sort de la boucle
+                        roleAttribue = true;
+                        System.out.println("🔍 DEBUG: Undercover attribué à " + playerName);
+                    } else {
+                        role = choisirRoleAlternatif(role);
+                        System.out.println("🔍 DEBUG: Undercover complet, nouvel essai avec: " + role);
                     }
-                    role = choisirRoleAlternatif(role);
                     break;
 
                 case "MrWhite":
@@ -339,23 +163,28 @@ public class TroisiemePageController implements Initializable {
                         joueurRole.setRole("MrWhite");
                         joueurRole.setMot("Tu es Mr White!");
                         totalMrWhite++;
-                        break; // Rôle trouvé, on sort de la boucle
+                        roleAttribue = true;
+                        System.out.println("🔍 DEBUG: MrWhite attribué à " + playerName);
+                    } else {
+                        role = choisirRoleAlternatif(role);
+                        System.out.println("🔍 DEBUG: MrWhite complet, nouvel essai avec: " + role);
                     }
-                    role = choisirRoleAlternatif(role);
                     break;
 
                 default:
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Erreur");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Impossible d'attribuer un rôle valide.");
-                    alert.showAndWait();
-                    return;
+                    System.out.println("❌ ERREUR: Rôle inconnu: " + role);
+                    role = new Role().donnerRoleAleatoire();
+                    break;
             }
+        }
 
-            if (joueurRole != null) {
-                break; // Sortie de la boucle principale si un joueur est bien créé
-            }
+        if (!roleAttribue || joueurRole == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Impossible d'attribuer un rôle valide après " + tentatives + " tentatives.");
+            alert.showAndWait();
+            return;
         }
 
         compteur++;
@@ -363,21 +192,34 @@ public class TroisiemePageController implements Initializable {
         playersRemaining--;
         ouvrirQuatriemePage(joueurRole);
 
-        if (compteur == admin.getNombreJoueur()) {
+        System.out.println("🔍 DEBUG: Après ajout - compteur = " + compteur + ", admin.getNombreJoueur() = " + admin.getNombreJoueur());
+
+        // ✅ CORRECTION : Vérification améliorée
+        if (compteur >= admin.getNombreJoueur()) {
+            System.out.println("🔍 ✅ CONDITION REMPLIE: Tous les joueurs ajoutés!");
+            System.out.println("🔍 Attribution des pouvoirs spéciaux...");
+            
+            // Appeler donnerDecorateurUnique
+            gestionJoueur.donnerDecorateurUnique();
+            
             goPage5.setDisable(false);
             nomJoueur.setDisable(true);
-            joueurPret.setText("Tous les joueurs ont recu leur role ");
+            joueurPret.setText("Tous les joueurs ont reçu leur rôle et les pouvoirs sont attribués!");
 
             gestionJoueur.AffichageListeJoueurs();
+        } else {
+            System.out.println("🔍 ❌ CONDITION NON REMPLIE: compteur (" + compteur + ") < admin.getNombreJoueur() (" + admin.getNombreJoueur() + ")");
         }
+
         nomJoueur.clear();
 
         Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
         successAlert.setTitle("Information");
         successAlert.setHeaderText(null);
-        successAlert.setContentText("Joueur " + playerName + " ajouté avec succès.");
+        successAlert.setContentText("Joueur " + playerName + " ajouté avec succès. Rôle: " + joueurRole.getRole());
         successAlert.showAndWait();
     }
+
     private String choisirRoleAlternatif(String currentRole) {
         if (!"Civile".equals(currentRole) && totalCivil < gestionJoueur.getNombreCivil()) {
             return "Civile";
@@ -386,8 +228,10 @@ public class TroisiemePageController implements Initializable {
         } else if (!"MrWhite".equals(currentRole) && totalMrWhite < gestionJoueur.getNombreMrWhite()) {
             return "MrWhite";
         }
-        return null; // Si tous les rôles sont atteints (ne devrait jamais arriver)
+        // Si tous les rôles sont complets, on retourne un rôle aléatoire
+        return new Role().donnerRoleAleatoire();
     }
+
     private void ouvrirQuatriemePage(Joueur joueur) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/quatriemeRolePage.fxml"));
@@ -410,15 +254,14 @@ public class TroisiemePageController implements Initializable {
         }
     }
 
-    
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        System.out.println("🔍 TroisiemePageController initialisé");
         goPage5.setDisable(true);
-    
+
         goPage5.setOnAction(event -> {
             try {
-                allerPage5(event);  // Ou la méthode de votre choix
+                allerPage5(event);
             } catch (IOException e) {
                 e.printStackTrace();
             }
